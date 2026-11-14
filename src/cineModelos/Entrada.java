@@ -11,5 +11,15 @@ package cineModelos;
 public abstract class Entrada {
     private double precio;
     
+    // Getter y setter------ inicio
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+    // Getter y setter --- Fin
     
 }
