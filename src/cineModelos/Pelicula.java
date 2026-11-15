@@ -14,9 +14,9 @@ import java.time.Duration;
 public class Pelicula implements Serializable{
     private String titulo;
     private Duration duracion;
-    private double estaActiva;
+    private boolean estaActiva;
 
-    public Pelicula(String titulo, Duration duracion, double estaActiva) {
+    public Pelicula(String titulo, Duration duracion, boolean estaActiva) {
         this.titulo = titulo;
         this.duracion = duracion;
         this.estaActiva = estaActiva;
@@ -41,14 +41,29 @@ public class Pelicula implements Serializable{
         this.duracion = duracion;
     }
 
-    public double getEstaActiva() {
+    public boolean getEstaActiva() {
         return estaActiva;
     }
 
-    public void setEstaActiva(double estaActiva) {
+    public void setEstaActiva(boolean estaActiva) {
         this.estaActiva = estaActiva;
     }
     // Getters y Setters ------- Fin
+
+    
+    public String getDuracionFormateada() {
+        if (this.duracion == null) {
+            return "Duración no especificada";
+        }
+        return this.duracion.toMinutes() + " minutos";
+    }
+    
+    @Override
+    public String toString() {
+        return "Pelicula{" + "titulo=" + titulo + ", duracion=" + getDuracionFormateada()+ ", estaActiva=" + estaActiva + '}';
+    }
+    
+    
     
     
 }

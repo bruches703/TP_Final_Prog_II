@@ -85,5 +85,53 @@ public class SucursalCine implements Serializable{
     public void agregarReserva(Reserva reserva){
         this.reservas.add(reserva);
     }
+
+    /**
+     * Muestra la lista de peliculas registradas en la sucursal actual
+     */
+    public void mostrarPeliculas() {
+        if(this.peliculas.isEmpty()){
+            System.out.println("No hay peliculas registradas");
+        } else {
+            System.out.println("--- PELÍCULAS EN LA SUCURSAL: " + sucursal + " ---");
+            for (Pelicula pelicula : this.peliculas) {
+                System.out.println(pelicula);
+            }        
+        }
+        
+    }
+    /**
+     * Muestra la lista de funciones registradas en la sucursal actual
+     */    
+    public void mostrarFunciones(){
+        if(this.funciones.isEmpty()){
+            System.out.println("No hay funciones disponibles");
+        } else {
+            for (Funcion funcion : this.funciones) {
+                System.out.println(funcion.toString());
+            }
+        }
+    }
     
+    /**
+     * Busca una sala en la lista de la sucursal actual por ID de sala. Si no 
+     * encuentra la ID devuelve null, de encontrarla devuelve la sala de la
+     * ID ingresada con sus atributos correspondientes
+     * @param idSala es de tipo int. Representa la ID de la sala a buscar
+     * @return Devuelve una sala con la ID buscada, devuelve null de no 
+     * encontrar la sala
+     */
+    public Sala buscarSalaDeCine(int idSala){
+        if(this.salas.isEmpty()){
+            System.out.println("No hay salas registradas");
+        } else {
+            for (Sala salaActual : this.salas) {
+                if(salaActual.getIdSala()== idSala){
+                    return salaActual;
+                }
+            }
+            System.out.println("Id de sala inexistente");
+        }
+        return null;
+    }
 }

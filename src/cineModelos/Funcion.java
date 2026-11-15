@@ -82,5 +82,11 @@ public class Funcion implements Serializable {
         
         return inicio.plus(pelicula.getDuracion());
     }
+
+    @Override
+    public String toString() {
+        return "Funcion{" + "fecha=" + fecha + ", horario=" + horario + ", sala=" + sala + ", pelicula=" + pelicula + ", precio=" + precio + '}';
+    }
+    
     
 }

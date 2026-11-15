@@ -4,14 +4,16 @@
  */
 package cineModelos;
 
+import java.util.List;
+
 /**
  *
  * @author Bruches
  */
 public class Sala {
     private int idSala;
-    private int fila;
-    private int columna;
+    private List<Butaca> listaButacas;
+    private boolean estaDisponible;
     
     // Getters y Setters ------- Inicio
 
@@ -23,21 +25,35 @@ public class Sala {
         this.idSala = idSala;
     }
 
-    public int getFila() {
-        return fila;
+    public List<Butaca> getListaButacas() {
+        return listaButacas;
     }
 
-    public void setFila(int fila) {
-        this.fila = fila;
+    public void setListaButacas(List<Butaca> listaButacas) {
+        this.listaButacas = listaButacas;
     }
 
-    public int getColumna() {
-        return columna;
+        
+    public boolean isEstaDisponible() {
+        return estaDisponible;
     }
 
-    public void setColumna(int columna) {
-        this.columna = columna;
+    public void setEstaDisponible(boolean estaDisponible) {
+        this.estaDisponible = estaDisponible;
     }
+
     
     // Getters y Setters ------- Fin
+
+    public Sala(int idSala, List<Butaca> listaButacas, boolean estaDisponible) {
+        this.idSala = idSala;
+        this.listaButacas = listaButacas;
+        this.estaDisponible = estaDisponible;
+    }
+
+    @Override
+    public String toString() {
+        return "Sala{" + "idSala=" + idSala + ", listaButacas=" + listaButacas + ", estaDisponible=" + estaDisponible + '}';
+    }
+    
 }

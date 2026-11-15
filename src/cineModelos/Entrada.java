@@ -25,4 +25,11 @@ public abstract class Entrada {
         public Entrada(double precio) {
         this.precio = precio;
     }
+
+    @Override
+    public String toString() {
+        return "Entrada{" + "precio=" + precio + '}';
+    }
+        
+        
 }

@@ -40,4 +40,11 @@ public class Reserva {
     }
     
     // Getters y Setters ------- Fin
+
+    @Override
+    public String toString() {
+        return "Reserva{" + "estadoDeReserva=" + estadoDeReserva + ", importe=" + importe + ", codigo=" + codigo + '}';
+    }
+    
+    
 }
