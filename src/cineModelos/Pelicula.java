@@ -4,16 +4,24 @@
  */
 package cineModelos;
 
-import java.util.Date;
+import java.io.Serializable;
+import java.time.Duration;
 
 /**
  *
  * @author Bruches
  */
-public class Pelicula {
+public class Pelicula implements Serializable{
     private String titulo;
-    private Date duracion;
+    private Duration duracion;
     private double estaActiva;
+
+    public Pelicula(String titulo, Duration duracion, double estaActiva) {
+        this.titulo = titulo;
+        this.duracion = duracion;
+        this.estaActiva = estaActiva;
+    }
+    
     
     // Getters y Setters ------- Inicio
 
@@ -25,11 +33,11 @@ public class Pelicula {
         this.titulo = titulo;
     }
 
-    public Date getDuracion() {
+    public Duration getDuracion() {
         return duracion;
     }
 
-    public void setDuracion(Date duracion) {
+    public void setDuracion(Duration duracion) {
         this.duracion = duracion;
     }
 
@@ -40,6 +48,8 @@ public class Pelicula {
     public void setEstaActiva(double estaActiva) {
         this.estaActiva = estaActiva;
     }
-    
     // Getters y Setters ------- Fin
+    
+    
 }
+

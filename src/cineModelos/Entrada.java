@@ -22,4 +22,7 @@ public abstract class Entrada {
     }
     // Getter y setter --- Fin
     
+        public Entrada(double precio) {
+        this.precio = precio;
+    }
 }

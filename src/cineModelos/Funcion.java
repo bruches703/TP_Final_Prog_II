@@ -3,25 +3,52 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package cineModelos;
-import java.util.Date;
+import cineModelos.Pelicula;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.LocalDateTime;
+
 /**
  *
  * @author Bruches
  */
-public class Funcion {
-    private Date fecha;
+public class Funcion implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private LocalDate fecha;
+    private LocalTime horario;
     private Sala sala;
     private Pelicula pelicula;
     private double precio;
-    
-    // Getters y Setters ------- Inicio
 
-    public Date getFecha() {
+    //Constructor
+
+    public Funcion(LocalDate fecha, LocalTime horario, Sala sala, Pelicula pelicula, double precio) {
+        this.fecha = fecha;
+        this.horario = horario;
+        this.sala = sala;
+        this.pelicula = pelicula;
+        this.precio = precio;
+    }
+    
+    
+    //Getters y Setters------- INICIO
+
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
+    }
+
+    public LocalTime getHorario() {
+        return horario;
+    }
+
+    public void setHorario(LocalTime horario) {
+        this.horario = horario;
     }
 
     public Sala getSala() {
@@ -32,14 +59,6 @@ public class Funcion {
         this.sala = sala;
     }
 
-    public Pelicula getPelicula() {
-        return pelicula;
-    }
-
-    public void setPelicula(Pelicula pelicula) {
-        this.pelicula = pelicula;
-    }
-
     public double getPrecio() {
         return precio;
     }
@@ -47,6 +66,21 @@ public class Funcion {
     public void setPrecio(double precio) {
         this.precio = precio;
     }
+
+    public Pelicula getPelicula() {
+        return pelicula;
+    }
+
+    public void setPelicula(Pelicula pelicula) {
+        this.pelicula = pelicula;
+    }
     
-    // Getters y Setters ------- Fin
+    // Getters y Setters------------- Fin
+    
+    public LocalDateTime getFinalizacionPelicula(){
+        LocalDateTime inicio = LocalDateTime.of(this.fecha, this.horario);
+        
+        return inicio.plus(pelicula.getDuracion());
+    }
+    
 }
