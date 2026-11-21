@@ -78,6 +78,9 @@ public class Butaca {
          return listaButacas;
     }
     
+
+
+
     @Override
     public String toString() {
         return "Butaca{" + "fila=" + fila + ", asiento=" + asiento + ", estaDisponible=" + estaDisponible + '}';

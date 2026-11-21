@@ -23,6 +23,8 @@ public class app {
         listaPeliculas.add(new Pelicula("Interstellar", Duration.ofMinutes(169), true));
         listaPeliculas.add(new Pelicula("Inception", Duration.ofMinutes(148), true));
         listaPeliculas.add(new Pelicula("The Matrix", Duration.ofMinutes(136), true));
+        
+
         // --- 2. CREACIÓN DE 4 LISTAS DE BUTACAS ---
         List<Butaca> listaButacas1 = Butaca.nuevaListaButacas(3, 4); // Sala pequeña: 3 filas, 4 butacas
         List<Butaca> listaButacas2 = Butaca.nuevaListaButacas(4, 5); // Sala mediana: 4 filas, 5 butacas
@@ -47,6 +49,10 @@ public class app {
         
         cineBera.mostrarFunciones();
         //Sala sala1 = 
-        //Funcion funcion = new Funcion(LocalDate.of(2026,11,16), LocalTime.of(18, 30),  , pelicula, 0);
+        Funcion nuevaFuncion = new Funcion(LocalDate.of(2026,11,25), LocalTime.of(18, 30), listaSalas.get(0), listaPeliculas.get(0),  125);
+        System.out.println(nuevaFuncion.toString());
+  
+        
+        
     }
 }
