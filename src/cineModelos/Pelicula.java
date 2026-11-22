@@ -5,35 +5,30 @@
 package cineModelos;
 
 import java.io.Serializable;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
-import utilidadesHerramientas.Validaciones;
-import persistencia.AlmacenarPeliculas;
 
 /**
  *
  * @author Bruches
  */
-public class Pelicula implements Serializable{
-    
-    private static final long serialVersionUID = 1001;
-    
+public class Pelicula implements Serializable {
+
+    private static final long serialVersionUID = 1001L;
+
     private String titulo;
     private Duration duracion;
     private boolean estaActiva;
 
-    //Constructor
     public Pelicula(String titulo, Duration duracion, boolean estaActiva) {
         this.titulo = titulo;
         this.duracion = duracion;
         this.estaActiva = estaActiva;
     }
-    
-    
-    // Getters y Setters ------- Inicio
 
+    // Getters y Setters ------- Inicio
     public String getTitulo() {
         return titulo;
     }
@@ -59,25 +54,23 @@ public class Pelicula implements Serializable{
     }
     // Getters y Setters ------- Fin
 
-    
     public String getDuracionFormateada() {
         if (this.duracion == null) {
             return "Duración no especificada";
         }
         return this.duracion.toMinutes() + " minutos";
     }
-    
+
     /**
      * Crea una pelicula nueva, pidiendo que ingrese los datos.
+     *
      * @param leer Tipo scanner para leer los datos ingresados
      * @return Devuelve una pelicula nueva
      */
-    public static Pelicula nuevaPelicula(Scanner leer){
-        //Guarda el titulo
+    public static Pelicula nuevaPelicula(Scanner leer) {
         System.out.println("Ingrese titulo de pelicula");
-        String nombre = leer.nextLine();
-        
-        //Guarda la duracion
+        String nombre = leer.nextLine().trim();
+
         System.out.println("Ingrese duracion: ");
         long minutos = 0;
         try {
@@ -85,45 +78,84 @@ public class Pelicula implements Serializable{
         } catch (NumberFormatException e) {
             System.out.println("Entrada invalida al ingresar la duracion.");
         }
-        
-        // Convierte la variable duracion de Long a Duration y activa la pelicula        
+
         Duration duracion = Duration.ofMinutes(minutos);
         boolean estaActiva = true;
-        
-        return new Pelicula(nombre, duracion, estaActiva);                
-    }
-    
 
-    
+        return new Pelicula(nombre, duracion, estaActiva);
+    }
+
     /**
-     * 
+     *
      * @param listaPelicula
      * @param tituloBuscado
-     * @return 
+     * @return
      */
-    public static Pelicula buscarPeliculaPorTitulo(List<Pelicula> listaPelicula, String tituloBuscado){
+    public static Pelicula buscarPeliculaPorTitulo(List<Pelicula> listaPelicula, String tituloBuscado) {
+        if (listaPelicula == null || tituloBuscado == null) {
+            return null;
+        }
+        String buscado = tituloBuscado.trim();
         for (Pelicula pelicula : listaPelicula) {
-            if(pelicula.getTitulo().equals(tituloBuscado)){
+            if (pelicula != null && pelicula.getTitulo() != null
+                    && pelicula.getTitulo().trim().equalsIgnoreCase(buscado)) {
                 return pelicula;
             }
         }
         return null;
     }
-    
+
+    /**
+     * 
+     * @param listaDePeliculas 
+     */
     public static void mostrarListaDePelicula(List<Pelicula> listaDePeliculas) {
+        if (listaDePeliculas == null || listaDePeliculas.isEmpty()) {
+            System.out.println("No hay peliculas registradas.");
+            return;
+        }
         System.out.println("Lista de peliculas: ");
         for (Pelicula pelicula : listaDePeliculas) {
-            System.out.println(pelicula.getTitulo());
-            System.out.println("Duracion: " + pelicula.getTitulo());
-
-            if (pelicula.getEstaActiva()) {
-                System.out.println("Estado: Activa");
-            } else {
-                System.out.println("Estado: Inactiva");
+            if (pelicula == null) {
+                continue;
             }
+            System.out.println("Titulo: " + pelicula.getTitulo());
+            System.out.println("Duracion: " + pelicula.getDuracionFormateada());
+            System.out.println("Estado: " + (pelicula.getEstaActiva() ? "Activa" : "Inactiva"));
+            System.out.println("-----------");
         }
     }
-    
+
+    /**
+     * 
+     * @param leer
+     * @param listaPeliculas
+     * @return 
+     */
+    public static Pelicula seleccionarPelicula(Scanner leer, List<Pelicula> listaPeliculas) {
+        if (listaPeliculas == null || listaPeliculas.isEmpty()) {
+            System.out.println("No hay peliculas disponibles");
+            return null;
+        }
+
+        Pelicula.mostrarListaDePelicula(listaPeliculas);
+        Pelicula peliculaEscogida = null;
+
+        while (peliculaEscogida == null) {
+            System.out.println("Ingresa el titulo de la pelicula");
+            String titulo = leer.nextLine().trim();
+            if (titulo.isEmpty()) {
+                System.out.println("El nombre de la pelicula no puede estar en blanco.");
+                continue;
+            }
+            peliculaEscogida = Pelicula.buscarPeliculaPorTitulo(listaPeliculas, titulo);
+            if (peliculaEscogida == null) {
+                System.out.println("El titulo ingresado no esta en la lista.");
+            }
+        }
+        return peliculaEscogida;
+    }
+
     @Override
     public boolean equals(Object objeto) {
         if (this == objeto) {
@@ -133,14 +165,12 @@ public class Pelicula implements Serializable{
             return false;
         }
         Pelicula pelicula = (Pelicula) objeto;
-        return titulo != null && titulo.equalsIgnoreCase(pelicula.titulo);
+        return titulo != null && pelicula.titulo != null
+                && titulo.trim().equalsIgnoreCase(pelicula.titulo.trim());
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(titulo == null ? null : titulo.toLowerCase());
+        return Objects.hash(titulo == null ? null : titulo.trim().toLowerCase());
     }
-    
-
 }
-

@@ -3,41 +3,49 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package cineModelos;
-import cineModelos.Pelicula;
+
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
+import utilidadesHerramientas.Validaciones;
 
 /**
  *
  * @author Bruches
  */
 public class Funcion implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
+
+    private int idFuncion;
     private LocalDate fecha;
     private LocalTime horario;
     private Sala sala;
     private Pelicula pelicula;
     private double precio;
 
-    //Constructor
-
-    public Funcion(LocalDate fecha, LocalTime horario, Sala sala, Pelicula pelicula, double precio) {
+    public Funcion(int idFuncion, LocalDate fecha, LocalTime horario, Sala sala, Pelicula pelicula, double precio) {
+        this.idFuncion = idFuncion;
         this.fecha = fecha;
         this.horario = horario;
         this.sala = sala;
         this.pelicula = pelicula;
         this.precio = precio;
     }
-    
-    
-    //Getters y Setters------- INICIO
+
+    // Getters y Setters ------- INICIO
+    public int getIdFuncion() {
+        return idFuncion;
+    }
+
+    public void setIdFuncion(int idFuncion) {
+        this.idFuncion = idFuncion;
+    }
 
     public LocalDate getFecha() {
         return fecha;
@@ -78,28 +86,21 @@ public class Funcion implements Serializable {
     public void setPelicula(Pelicula pelicula) {
         this.pelicula = pelicula;
     }
-    
-    // Getters y Setters------------- Fin
-    
-    public LocalDateTime getFinalizacionPelicula(){
+    // Getters y Setters ------------- Fin
+
+    public LocalDateTime getFinalizacionPelicula() {
         LocalDateTime inicio = LocalDateTime.of(this.fecha, this.horario);
-        
         return inicio.plus(pelicula.getDuracion());
     }
 
     @Override
     public String toString() {
-        return "Funcion{" + "fecha=" + fecha + ", horario=" + horario + ", sala=" + sala + ", pelicula=" + pelicula + ", precio=" + precio + '}';
+        return "Funcion{" + "idFuncion=" + idFuncion + ", fecha=" + fecha + ", horario=" + horario
+                + ", sala=" + sala + ", pelicula=" + pelicula + ", precio=" + precio + '}';
     }
-    
-    /**
-     * 
-     * @param leer
-     * @return 
-     */
+
     public static LocalDate ingresarFecha(Scanner leer) {
         DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
         LocalDate fechaFuncion = null;
         while (fechaFuncion == null) {
             System.out.println("Ingrese fecha de la funcion");
@@ -112,12 +113,7 @@ public class Funcion implements Serializable {
         }
         return fechaFuncion;
     }
-    
-    /**
-     * 
-     * @param leer
-     * @return 
-     */
+
     public static LocalTime ingresarHorario(Scanner leer) {
         DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime horarioFuncion = null;
@@ -132,15 +128,9 @@ public class Funcion implements Serializable {
         }
         return horarioFuncion;
     }
-    
-    /**
-     * 
-     * @param leer
-     * @param listaSalas
-     * @return 
-     */
+
     public static Sala seleccionarSala(Scanner leer, List<Sala> listaSalas) {
-        if (listaSalas.isEmpty()) {
+        if (listaSalas == null || listaSalas.isEmpty()) {
             System.out.println("No hay salas registradas");
             return null;
         }
@@ -170,47 +160,69 @@ public class Funcion implements Serializable {
         return salaParaFuncion;
     }
 
-    public static Pelicula seleccionarPelicula(Scanner leer, List<Pelicula> listaPeliculas) {
-        if (listaPeliculas == null) {
-            System.out.println("No hay peliculas disponibles");
-            return null;
+    public static Funcion nuevaFuncion(Scanner leer, List<Sala> listaSalas, List<Pelicula> listPelicula, List<Funcion> listaDeFunciones) {
+        int idFuncion = Validaciones.validarIdFuncion(leer, listaDeFunciones);
+        LocalDate fechaFuncion = ingresarFecha(leer);
+        LocalTime horarioFuncion = ingresarHorario(leer);
+        Sala salaParaFuncion = seleccionarSala(leer, listaSalas);
+        Pelicula peliculaParaFuncion = Pelicula.seleccionarPelicula(leer, listPelicula);
+
+        return new Funcion(idFuncion, fechaFuncion, horarioFuncion, salaParaFuncion, peliculaParaFuncion, 5000);
+    }
+
+    public static void mostrarFunciones(List<Funcion> listaDeFunciones) {
+        if (listaDeFunciones == null || listaDeFunciones.isEmpty()) {
+            System.out.println("No hay funciones previstas");
+            return;
         }
 
-        Pelicula.mostrarListaDePelicula(listaPeliculas);
-        Pelicula peliculaEscogida = null;
-        
-        while (peliculaEscogida == null) {
-            System.out.println("Ingresa el titulo de la pelicula");
-            String titulo = leer.nextLine().trim();
-            if (titulo.isEmpty()) {
-                System.out.println("El nombre de la pelicula no puede estar en blanco.");
-                continue;
-            }
-            peliculaEscogida = Pelicula.buscarPeliculaPorTitulo(listaPeliculas, titulo);
-            if (peliculaEscogida == null) {
-                System.out.println("El titulo ingresado no esta en la lista.");
+        for (Funcion funcion : listaDeFunciones) {
+            if (funcion != null) {
+                motrarUnaFuncion(funcion);
             }
         }
-        return peliculaEscogida;
     }
-    
-    public static Funcion nuevaFuncion(Scanner leer, List<Sala> listaSalas, List<Pelicula> listPelicula){       
-        LocalDate fechaFuncion = ingresarFecha(leer);
-        
-        LocalTime horarioFuncion = ingresarHorario(leer);
-        
-        Sala salaParaFuncion = seleccionarSala(leer, listaSalas);
-        
-        Pelicula peliculaParaFuncion = seleccionarPelicula(leer, listPelicula);
-        
-        return new Funcion(fechaFuncion, horarioFuncion, salaParaFuncion, peliculaParaFuncion, 50000);
+
+    public static void motrarUnaFuncion(Funcion funcion) {
+        if (funcion != null && funcion.getPelicula() != null && funcion.getPelicula().getEstaActiva()) {
+            System.out.println("ID Funcion: " + funcion.getIdFuncion());
+            System.out.println("Pelicula: " + funcion.getPelicula().getTitulo());
+            System.out.println("Fecha: " + funcion.getFechaFuncion());
+            System.out.println("Horario: " + funcion.getHorarioFuncion());
+            int idSala = (funcion.getSala() != null) ? funcion.getSala().getIdSala() : -1;
+            System.out.println("Id de sala: " + idSala);
+        }
+    }
+
+    public static int buscarFuncionPorId(List<Funcion> listaDeFunciones, int idFuncion) {
+        if (listaDeFunciones == null || listaDeFunciones.isEmpty()) {
+            return -1;
+        }
+        for (Funcion funcion : listaDeFunciones) {
+            if (funcion != null && funcion.getIdFuncion() == idFuncion) {
+                return idFuncion;
+            }
+        }
+        return -1;
+    }
+
+    public static Funcion traerFuncionPorId(List<Funcion> listaDeFunciones, int idDeFuncion) {
+        if (listaDeFunciones == null || listaDeFunciones.isEmpty()) {
+            return null;
+        }
+        for (Funcion funcion : listaDeFunciones) {
+            if (funcion != null && funcion.getIdFuncion() == idDeFuncion) {
+                return funcion;
+            }
+        }
+        return null;
     }
 
     public String getHorarioFuncion() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return (horario != null) ? horario.toString() : "";
     }
 
     public String getFechaFuncion() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return (fecha != null) ? fecha.toString() : "";
     }
 }

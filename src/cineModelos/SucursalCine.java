@@ -6,21 +6,32 @@ package cineModelos;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Scanner;
+import persistencia.AlmacenamientoReserva;
 
 /**
  *
  * @author bruch
  */
-public class SucursalCine implements Serializable{
+public class SucursalCine implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
+
     private String sucursal;
     private List<Pelicula> peliculas;
     private List<Sala> salas;
     private List<Funcion> funciones;
     private List<Reserva> reservas;
-    
-    //getters y setters ------------- INICIO
+
+    public SucursalCine(String sucursal, List<Pelicula> peliculas, List<Sala> salas, List<Funcion> funciones, List<Reserva> reservas) {
+        this.sucursal = sucursal;
+        this.peliculas = peliculas;
+        this.salas = salas;
+        this.funciones = funciones;
+        this.reservas = reservas;
+    }
+
+    // Getters y setters ------------- INICIO
     public String getSucursal() {
         return sucursal;
     }
@@ -60,51 +71,65 @@ public class SucursalCine implements Serializable{
     public void setReservas(List<Reserva> reservas) {
         this.reservas = reservas;
     }
-    //getters y setters ------------- FIN
+    // Getters y setters ------------- FIN
 
-    public SucursalCine(String sucursal, List<Pelicula> peliculas, List<Sala> salas, List<Funcion> funciones, List<Reserva> reservas) {
-        this.sucursal = sucursal;
-        this.peliculas = peliculas;
-        this.salas = salas;
-        this.funciones = funciones;
-        this.reservas = reservas;
-    }
-    
-    public void agregarPelicula(Pelicula pelicula){
+    public void agregarPelicula(Pelicula pelicula) {
         this.peliculas.add(pelicula);
-    } 
-    
-    public void agregarSala(Sala sala){
+    }
+
+    public void agregarSala(Sala sala) {
         this.salas.add(sala);
     }
-    
-    public void agregarFuncion(Funcion funcion){
+
+    public void agregarFuncion(Funcion funcion) {
         this.funciones.add(funcion);
     }
-    
-    public void agregarReserva(Reserva reserva){
+
+    public void agregarReserva(Reserva reserva) {
         this.reservas.add(reserva);
+    }
+
+    public void registrarReserva(Scanner leer, AlmacenamientoReserva almacenamientoReserva) {
+        if (almacenamientoReserva == null) {
+            System.out.println("No se inicializo el almacenamiento de reservas.");
+            return;
+        }
+
+        if (this.reservas == null) {
+            System.out.println("No se inicializo la lista de reservas.");
+            return;
+        }
+
+        Reserva nuevaReserva = Reserva.ingresarNuevaResarva(this.funciones, leer);
+        if (nuevaReserva != null) {
+            agregarReserva(nuevaReserva);
+            almacenamientoReserva.almacenarReserva(
+                    nuevaReserva,
+                    nuevaReserva.getSala(),
+                    nuevaReserva.getButacasReservadas()
+            );
+        }
     }
 
     /**
      * Muestra la lista de peliculas registradas en la sucursal actual
      */
     public void mostrarPeliculas() {
-        if(this.peliculas.isEmpty()){
+        if (this.peliculas.isEmpty()) {
             System.out.println("No hay peliculas registradas");
         } else {
             System.out.println("--- PELÍCULAS EN LA SUCURSAL: " + sucursal + " ---");
             for (Pelicula pelicula : this.peliculas) {
                 System.out.println(pelicula);
-            }        
+            }
         }
-        
     }
+
     /**
      * Muestra la lista de funciones registradas en la sucursal actual
-     */    
-    public void mostrarFunciones(){
-        if(this.funciones.isEmpty()){
+     */
+    public void mostrarFunciones() {
+        if (this.funciones.isEmpty()) {
             System.out.println("No hay funciones disponibles");
         } else {
             for (Funcion funcion : this.funciones) {
@@ -112,21 +137,22 @@ public class SucursalCine implements Serializable{
             }
         }
     }
-    
+
     /**
-     * Busca una sala en la lista de la sucursal actual por ID de sala. Si no 
-     * encuentra la ID devuelve null, de encontrarla devuelve la sala de la
-     * ID ingresada con sus atributos correspondientes
+     * Busca una sala en la lista de la sucursal actual por ID de sala. Si no
+     * encuentra la ID devuelve null, de encontrarla devuelve la sala de la ID
+     * ingresada con sus atributos correspondientes
+     *
      * @param idSala es de tipo int. Representa la ID de la sala a buscar
-     * @return Devuelve una sala con la ID buscada, devuelve null de no 
+     * @return Devuelve una sala con la ID buscada, devuelve null de no
      * encontrar la sala
      */
-    public Sala buscarSalaDeCine(int idSala){
-        if(this.salas.isEmpty()){
+    public Sala buscarSalaDeCine(int idSala) {
+        if (this.salas.isEmpty()) {
             System.out.println("No hay salas registradas");
         } else {
             for (Sala salaActual : this.salas) {
-                if(salaActual.getIdSala()== idSala){
+                if (salaActual.getIdSala() == idSala) {
                     return salaActual;
                 }
             }
