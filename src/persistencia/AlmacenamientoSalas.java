@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -19,9 +20,11 @@ import java.util.Scanner;
  * @author Bruches
  */
 public class AlmacenamientoSalas implements Serializable {
-    private static final long serialVersionUID = 2001;
-    private final Path directorio;
+private static final String archivo = "salas.csv";
+    private static final String separador = ";";
 
+    private final Path directorio;
+    
     
     public AlmacenamientoSalas(Path directorio) {
         this.directorio = directorio;
@@ -37,6 +40,25 @@ public class AlmacenamientoSalas implements Serializable {
         Sala nuevaSala = Sala.nuevaSala(leer);
         almacenarSala(nuevaSala, separador);
     }
+    public void agregarNuevaSala(Scanner leer, List<Sala> listaSalas) {
+        Sala nuevaSala = Sala.nuevaSala(leer);
+        if (nuevaSala == null) {
+            System.out.println("No se pudo crear la sala.");
+            return;
+        }
+
+        if (listaSalas != null && Sala.buscarSalaPorId(listaSalas, nuevaSala.getIdSala()) != null) {
+            System.out.println("Ya existe una sala con el ID " + nuevaSala.getIdSala() + ".");
+            return;
+        }
+
+        if (listaSalas != null) {
+            listaSalas.add(nuevaSala);
+        }
+
+        almacenarSala(nuevaSala, separador);
+    }
+    
     
     /**
      * 
@@ -67,4 +89,10 @@ public class AlmacenamientoSalas implements Serializable {
             System.err.println("Error al guardar esta sala nueva" );
         }
     }    
+    
+    public void almacenarListaDeSalas(List<Sala> listaDeSalas){
+        for (Sala sala : listaDeSalas) {
+            almacenarSala(sala, separador);
+        }
+    }
 }

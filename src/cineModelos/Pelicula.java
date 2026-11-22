@@ -93,33 +93,14 @@ public class Pelicula implements Serializable{
         return new Pelicula(nombre, duracion, estaActiva);                
     }
     
-    /**
-     * Almacena una pelicula nueva en la lista. Si la pelicula ya existe en el archivo
-     * no se alacena. Para que exista debe coincidir todos los atributos de las
-     * peliculas, no solo el titulo.
-     * @param peliculaNueva De tipo pelicula, Representa a la nueva pelicula a guardar
-     * @param listaPeliculas Lista de peliculas donde se almacena la nueva pelicula
-     */
-    public static void almacenarPelicula(Pelicula peliculaNueva, List<Pelicula> listaPeliculas){
-        // Si la pelicula es nula..
-        if (peliculaNueva == null) {
-            System.out.println("No se puede guardar pelicula nula.");
-            return;            
-        }
-        
-        //Si la pelicula existe...
-        if (listaPeliculas.contains(peliculaNueva)) {
-            System.out.println("Pelicula "+ peliculaNueva.getTitulo()+" ya existe");
-            return;
-        }
-        
-        //Datos para persistencia
-        Path directorio = Path.of("datasave");
-        String separador = ";";
-        AlmacenarPeliculas guardador = new AlmacenarPeliculas(directorio);
-        guardador.almacenarPelicula(peliculaNueva, separador);
-    }
+
     
+    /**
+     * 
+     * @param listaPelicula
+     * @param tituloBuscado
+     * @return 
+     */
     public static Pelicula buscarPeliculaPorTitulo(List<Pelicula> listaPelicula, String tituloBuscado){
         for (Pelicula pelicula : listaPelicula) {
             if(pelicula.getTitulo().equals(tituloBuscado)){
@@ -129,6 +110,19 @@ public class Pelicula implements Serializable{
         return null;
     }
     
+    public static void mostrarListaDePelicula(List<Pelicula> listaDePeliculas) {
+        System.out.println("Lista de peliculas: ");
+        for (Pelicula pelicula : listaDePeliculas) {
+            System.out.println(pelicula.getTitulo());
+            System.out.println("Duracion: " + pelicula.getTitulo());
+
+            if (pelicula.getEstaActiva()) {
+                System.out.println("Estado: Activa");
+            } else {
+                System.out.println("Estado: Inactiva");
+            }
+        }
+    }
     
     @Override
     public boolean equals(Object objeto) {

@@ -46,5 +46,4 @@ public class Reserva {
         return "Reserva{" + "estadoDeReserva=" + estadoDeReserva + ", importe=" + importe + ", codigo=" + codigo + '}';
     }
     
-    
 }

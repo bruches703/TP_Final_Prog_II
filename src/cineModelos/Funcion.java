@@ -176,18 +176,9 @@ public class Funcion implements Serializable {
             return null;
         }
 
-        System.out.println("Lista de peliculas: ");
-        for (Pelicula pelicula : listaPeliculas) {
-            System.out.println(pelicula.getTitulo());
-            System.out.println("Duracion: " + pelicula.getTitulo());
-
-            if (pelicula.getEstaActiva()) {
-                System.out.println("Estado: Activa");
-            } else {
-                System.out.println("Estado: Inactiva");
-            }
-        }
+        Pelicula.mostrarListaDePelicula(listaPeliculas);
         Pelicula peliculaEscogida = null;
+        
         while (peliculaEscogida == null) {
             System.out.println("Ingresa el titulo de la pelicula");
             String titulo = leer.nextLine().trim();
@@ -202,6 +193,7 @@ public class Funcion implements Serializable {
         }
         return peliculaEscogida;
     }
+    
     public static Funcion nuevaFuncion(Scanner leer, List<Sala> listaSalas, List<Pelicula> listPelicula){       
         LocalDate fechaFuncion = ingresarFecha(leer);
         
@@ -212,5 +204,13 @@ public class Funcion implements Serializable {
         Pelicula peliculaParaFuncion = seleccionarPelicula(leer, listPelicula);
         
         return new Funcion(fechaFuncion, horarioFuncion, salaParaFuncion, peliculaParaFuncion, 50000);
+    }
+
+    public String getHorarioFuncion() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public String getFechaFuncion() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

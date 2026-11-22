@@ -4,11 +4,15 @@
  */
 package cineAplication;
 import cineModelos.*;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import persistencia.AlmacenamientoSalas;
+import persistencia.AlmacenarPeliculas;
+import java.util.Scanner;
 /**
  *
  * @author Bruches
@@ -16,6 +20,7 @@ import java.util.List;
 public class app {
     public static void main(String[] args) {
         
+        Scanner leer = new Scanner(System.in);
         // --- 1. CREACIÓN DE 4 PELÍCULAS ---
         
         List<Pelicula> listaPeliculas = new ArrayList<>();
@@ -53,6 +58,12 @@ public class app {
         System.out.println(nuevaFuncion.toString());
   
         
+        AlmacenarPeliculas almacenListaPeliculas = new AlmacenarPeliculas(Path.of("datasave"));
+        AlmacenamientoSalas almacenarListaSalas = new AlmacenamientoSalas(Path.of("datasave"));
+        
+        
+        almacenListaPeliculas.almacenarListaDePeliculas(listaPeliculas);
+        almacenarListaSalas.almacenarListaDeSalas(listaSalas);
         
     }
 }
