@@ -27,10 +27,15 @@ public class AlmacenamientoSalas implements Serializable {
         this.directorio = directorio;
     }
     
-
-    public void agregarNuevaPelicula(){
+    
+    /**
+     * 
+     */
+    public void agregarNuevaSala(){
+        String separador = ";";
         Scanner leer = new Scanner(System.in);
-        
+        Sala nuevaSala = Sala.nuevaSala(leer);
+        almacenarSala(nuevaSala, separador);
     }
     
     /**

@@ -14,9 +14,17 @@ import java.util.Scanner;
 public class Sala {
     private int idSala;
     private List<Butaca> listaButacas;
+    private int butacasTotales;
     private boolean estaDisponible;
     
+    public int getButacasTotales() {
+        return butacasTotales;
+    }
+
     // Getters y Setters ------- Inicio
+    public void setButacasTotales(int butacasTotales) {
+        this.butacasTotales = butacasTotales;
+    }
 
     public int getIdSala() {
         return idSala;
@@ -50,9 +58,10 @@ public class Sala {
         this.idSala = idSala;
         this.listaButacas = listaButacas;
         this.estaDisponible = estaDisponible;
+        this.butacasTotales = (listaButacas != null) ? listaButacas.size() : 0;
     }
 
-    public Sala nuevaSala(Scanner leer){
+    public static Sala nuevaSala(Scanner leer){
         System.out.println("Ingrese numero de sala: ");
         int idNuevaSala = leer.nextInt();
         
@@ -102,6 +111,22 @@ public class Sala {
         System.out.println();
     }
         
+    /**
+     * 
+     * @param listaSalas
+     * @param idBuscada
+     * @return 
+     */
+    public static Sala buscarSalaPorId(List<Sala> listaSalas, int idBuscada){
+        int indice = 0;
+        for (Sala sala : listaSalas) {
+            if(sala.getIdSala()== idBuscada){
+                return sala;
+            }        
+            indice ++;
+        }
+        return null;
+    }
     /**
      * To string
      *

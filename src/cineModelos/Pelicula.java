@@ -72,7 +72,7 @@ public class Pelicula implements Serializable{
      * @param leer Tipo scanner para leer los datos ingresados
      * @return Devuelve una pelicula nueva
      */
-    public Pelicula nuevaPelicula(Scanner leer){
+    public static Pelicula nuevaPelicula(Scanner leer){
         //Guarda el titulo
         System.out.println("Ingrese titulo de pelicula");
         String nombre = leer.nextLine();
@@ -118,6 +118,15 @@ public class Pelicula implements Serializable{
         String separador = ";";
         AlmacenarPeliculas guardador = new AlmacenarPeliculas(directorio);
         guardador.almacenarPelicula(peliculaNueva, separador);
+    }
+    
+    public static Pelicula buscarPeliculaPorTitulo(List<Pelicula> listaPelicula, String tituloBuscado){
+        for (Pelicula pelicula : listaPelicula) {
+            if(pelicula.getTitulo().equals(tituloBuscado)){
+                return pelicula;
+            }
+        }
+        return null;
     }
     
     

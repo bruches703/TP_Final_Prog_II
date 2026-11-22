@@ -30,9 +30,12 @@ public class AlmacenarPeliculas implements Serializable {
     }
 
     public void agregarNuevaPelicula(){
+        String separador = ";";
         Scanner leer = new Scanner(System.in);
-        
+        Pelicula nuevaPelicula = Pelicula.nuevaPelicula(leer);
+        almacenarPelicula(nuevaPelicula, separador);
     }
+    
     public void almacenarPelicula(Pelicula pelicula, String separador) {
         if (pelicula == null) {
             System.out.println("No se puede guardar esta informacion");

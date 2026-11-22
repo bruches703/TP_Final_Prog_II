@@ -8,6 +8,10 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  *
@@ -88,5 +92,125 @@ public class Funcion implements Serializable {
         return "Funcion{" + "fecha=" + fecha + ", horario=" + horario + ", sala=" + sala + ", pelicula=" + pelicula + ", precio=" + precio + '}';
     }
     
+    /**
+     * 
+     * @param leer
+     * @return 
+     */
+    public static LocalDate ingresarFecha(Scanner leer) {
+        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        LocalDate fechaFuncion = null;
+        while (fechaFuncion == null) {
+            System.out.println("Ingrese fecha de la funcion");
+            String auxiliar = leer.nextLine().trim();
+            try {
+                fechaFuncion = LocalDate.parse(auxiliar, formatoFecha);
+            } catch (DateTimeParseException e) {
+                System.out.println("Fecha invalida. Use el formato dd/MM/yyyy.");
+            }
+        }
+        return fechaFuncion;
+    }
     
+    /**
+     * 
+     * @param leer
+     * @return 
+     */
+    public static LocalTime ingresarHorario(Scanner leer) {
+        DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime horarioFuncion = null;
+        while (horarioFuncion == null) {
+            System.out.println("Ingrese horario de la funcion (HH:mm): ");
+            String textoHora = leer.nextLine().trim();
+            try {
+                horarioFuncion = LocalTime.parse(textoHora, formatoHora);
+            } catch (DateTimeParseException e) {
+                System.out.println("Horario invalido. Use el formato HH:mm.");
+            }
+        }
+        return horarioFuncion;
+    }
+    
+    /**
+     * 
+     * @param leer
+     * @param listaSalas
+     * @return 
+     */
+    public static Sala seleccionarSala(Scanner leer, List<Sala> listaSalas) {
+        if (listaSalas.isEmpty()) {
+            System.out.println("No hay salas registradas");
+            return null;
+        }
+
+        System.out.println("Lista de salas: ");
+        for (Sala sala : listaSalas) {
+            System.out.println("Id de sala: " + sala.getIdSala());
+            System.out.println("Cantidad de butacas: " + sala.getButacasTotales());
+            System.out.println("-----------");
+        }
+
+        Sala salaParaFuncion = null;
+        while (salaParaFuncion == null) {
+            System.out.println("Ingresa la id de la sala: ");
+            String auxiliar = leer.nextLine().trim();
+            try {
+                int idBuscado = Integer.parseInt(auxiliar);
+                salaParaFuncion = Sala.buscarSalaPorId(listaSalas, idBuscado);
+
+                if (salaParaFuncion == null) {
+                    System.out.println("No se encontro una sala con ID " + idBuscado + ". Reingrese:");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada invalida. Ingrese un numero entero para el ID:");
+            }
+        }
+        return salaParaFuncion;
+    }
+
+    public static Pelicula seleccionarPelicula(Scanner leer, List<Pelicula> listaPeliculas) {
+        if (listaPeliculas == null) {
+            System.out.println("No hay peliculas disponibles");
+            return null;
+        }
+
+        System.out.println("Lista de peliculas: ");
+        for (Pelicula pelicula : listaPeliculas) {
+            System.out.println(pelicula.getTitulo());
+            System.out.println("Duracion: " + pelicula.getTitulo());
+
+            if (pelicula.getEstaActiva()) {
+                System.out.println("Estado: Activa");
+            } else {
+                System.out.println("Estado: Inactiva");
+            }
+        }
+        Pelicula peliculaEscogida = null;
+        while (peliculaEscogida == null) {
+            System.out.println("Ingresa el titulo de la pelicula");
+            String titulo = leer.nextLine().trim();
+            if (titulo.isEmpty()) {
+                System.out.println("El nombre de la pelicula no puede estar en blanco.");
+                continue;
+            }
+            peliculaEscogida = Pelicula.buscarPeliculaPorTitulo(listaPeliculas, titulo);
+            if (peliculaEscogida == null) {
+                System.out.println("El titulo ingresado no esta en la lista.");
+            }
+        }
+        return peliculaEscogida;
+    }
+    public static Funcion nuevaFuncion(Scanner leer, List<Sala> listaSalas, List<Pelicula> listPelicula){       
+        LocalDate fechaFuncion = ingresarFecha(leer);
+        
+        LocalTime horarioFuncion = ingresarHorario(leer);
+        
+        Sala salaParaFuncion = seleccionarSala(leer, listaSalas);
+        
+        Pelicula peliculaParaFuncion = seleccionarPelicula(leer, listPelicula);
+        
+        return new Funcion(fechaFuncion, horarioFuncion, salaParaFuncion, peliculaParaFuncion, 50000);
+    }
 }
