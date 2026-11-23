@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="16.0" styleClass="content-area"
+      xmlns="http://javafx.com/javafx/27.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="cineController.ControladorFunciones">
+    <children>
+        <Label styleClass="page-title" text="Funciones" />
+
+        <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+            <children>
+                <VBox spacing="10.0" styleClass="summary-box" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label styleClass="section-title" text="Funciones programadas" />
+
+                        <TableView fx:id="tblFunciones" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colPelicula" prefWidth="190.0" text="Película" />
+                                <TableColumn fx:id="colSala" prefWidth="80.0" text="Sala" />
+                                <TableColumn fx:id="colFecha" prefWidth="110.0" text="Fecha" />
+                                <TableColumn fx:id="colHorario" prefWidth="85.0" text="Horario" />
+                                <TableColumn fx:id="colPrecio" prefWidth="100.0" text="Precio" />
+                            </columns>
+                        </TableView>
+
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <children>
+                                <Button fx:id="btnVolver" onAction="#volver"
+                                        styleClass="btn-secondary" text="← Volver" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+
+                <VBox prefWidth="320.0" spacing="12.0" styleClass="summary-box">
+                    <children>
+                        <Label styleClass="section-title" text="Gestión de función" />
+
+                        <VBox spacing="4.0">
+                            <children>
+                                <Label styleClass="field-label" text="Película" />
+                                <ComboBox fx:id="cmbPelicula" maxWidth="1.7976931348623157E308" />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="4.0">
+                            <children>
+                                <Label styleClass="field-label" text="Sala" />
+                                <ComboBox fx:id="cmbSala" maxWidth="1.7976931348623157E308" />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="4.0">
+                            <children>
+                                <Label styleClass="field-label" text="Fecha" />
+                                <DatePicker fx:id="dpFecha" maxWidth="1.7976931348623157E308" />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="4.0">
+                            <children>
+                                <Label styleClass="field-label" text="Horario (HH:mm)" />
+                                <TextField fx:id="txtHorario" promptText="Ej: 20:30" />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="4.0">
+                            <children>
+                                <Label styleClass="field-label" text="Precio base" />
+                                <TextField fx:id="txtPrecio" promptText="Ej: 8500" />
+                            </children>
+                        </VBox>
+
+                        <Button fx:id="btnAgregarFuncion" maxWidth="1.7976931348623157E308"
+                                onAction="#agregarFuncion" styleClass="btn-primary"
+                                text="Agregar función" />
+
+                        <Button fx:id="btnModificarFuncion" maxWidth="1.7976931348623157E308"
+                                onAction="#modificarFuncion" styleClass="btn-secondary"
+                                text="Modificar seleccionada" />
+
+                        <Label fx:id="lblMensaje" styleClass="hint-text" text="" wrapText="true" />
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</VBox>

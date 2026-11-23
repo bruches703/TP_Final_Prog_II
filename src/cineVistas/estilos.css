@@ -1,0 +1,241 @@
+/* ==========================================================================
+   ESTILO CINE AZUL MARINO + ÁMBAR — APLICACIÓN CINE
+   ========================================================================== */
+
+.root {
+    -fx-font-family: "Segoe UI", "Inter", system-ui, sans-serif;
+    -fx-font-size: 13.5px;
+    -fx-base: #162347;
+    -fx-background: #0d1630;
+    -fx-accent: #f59e0b;
+    -fx-focus-color: #fbbf24;
+    -fx-faint-focus-color: rgba(245, 158, 11, 0.25);
+}
+
+/* Fondo degradado azul marino / azul medio como la referencia */
+.content-area {
+    -fx-background-color: linear-gradient(to bottom, #0b3c6d 0%, #14224a 52%, #0c5aa6 100%);
+    -fx-padding: 22 26 22 26;
+}
+
+/* Tarjeta principal oscura redondeada */
+.summary-box {
+    -fx-background-color: rgba(20, 34, 74, 0.94);
+    -fx-background-radius: 18;
+    -fx-border-color: rgba(125, 211, 252, 0.18);
+    -fx-border-width: 1;
+    -fx-border-radius: 18;
+    -fx-padding: 18 20 18 20;
+    -fx-effect: dropshadow(gaussian, rgba(2, 6, 23, 0.45), 18, 0, 0, 6);
+}
+
+/* ==========================================================================
+   TIPOGRAFÍA
+   ========================================================================== */
+
+.page-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e2e8f0;
+    -fx-padding: 0 0 4 0;
+}
+
+.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f8fafc;
+    -fx-padding: 0 0 4 0;
+}
+
+.field-label {
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #93c5fd;
+}
+
+.hint-text {
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #7dd3fc;
+    -fx-padding: 4 0 0 0;
+}
+
+/* ==========================================================================
+   BOTONES (ÁMBAR / NARANJA PRINCIPAL + SECUNDARIO OSCURO)
+   ========================================================================== */
+
+.btn-primary {
+    -fx-background-color: linear-gradient(to right, #f59e0b, #fb8c00);
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 10 18 10 18;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(245, 158, 11, 0.45), 16, 0, 0, 4);
+}
+
+.btn-primary:hover {
+    -fx-background-color: linear-gradient(to right, #fbbf24, #f59e0b);
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #d97706;
+}
+
+.btn-primary:disabled {
+    -fx-background-color: #334155;
+    -fx-text-fill: #94a3b8;
+    -fx-effect: none;
+    -fx-opacity: 0.8;
+}
+
+.btn-secondary {
+    -fx-background-color: rgba(15, 23, 42, 0.65);
+    -fx-text-fill: #e2e8f0;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(148, 163, 184, 0.35);
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-padding: 8 15 8 15;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: rgba(30, 41, 59, 0.9);
+    -fx-border-color: #7dd3fc;
+}
+
+/* ==========================================================================
+   FORMULARIOS
+   ========================================================================== */
+
+.text-field {
+    -fx-background-color: #0e1836;
+    -fx-text-fill: #f8fafc;
+    -fx-prompt-text-fill: #64748b;
+    -fx-background-radius: 8;
+    -fx-border-color: #2c3f70;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-padding: 8 11 8 11;
+}
+
+.text-field:focused {
+    -fx-border-color: #f59e0b;
+    -fx-border-width: 1.5;
+}
+
+.combo-box,
+.date-picker {
+    -fx-background-color: #0e1836;
+    -fx-background-radius: 8;
+    -fx-border-color: #2c3f70;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-padding: 2 6 2 6;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: #f8fafc;
+    -fx-background-color: #0e1836;
+    -fx-padding: 6 8 6 8;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #1e3a8a;
+}
+
+.date-picker .text-field {
+    -fx-border-width: 0;
+    -fx-background-color: transparent;
+}
+
+.check-box {
+    -fx-text-fill: #e2e8f0;
+    -fx-font-weight: bold;
+    -fx-padding: 4 0 4 0;
+}
+
+.check-box .box {
+    -fx-background-color: #0e1836;
+    -fx-border-color: #7dd3fc;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #f59e0b;
+    -fx-border-color: #f59e0b;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #ffffff;
+}
+
+/* ==========================================================================
+   TABLAS
+   ========================================================================== */
+
+.table-view {
+    -fx-background-color: #0e1836;
+    -fx-background-radius: 10;
+    -fx-border-color: #2c3f70;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-padding: 0;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #172754;
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-color: transparent transparent #2c3f70 transparent;
+    -fx-border-width: 1;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 36px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #bae6fd;
+    -fx-font-weight: bold;
+    -fx-font-size: 12.5px;
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 0 0 0 8;
+}
+
+.table-row-cell {
+    -fx-background-color: #0e1836;
+    -fx-border-color: transparent transparent #1a2b5c transparent;
+    -fx-border-width: 1;
+    -fx-cell-size: 36px;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #122047;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #1d356e;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: rgba(245, 158, 11, 0.24);
+}
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: #fde68a;
+    -fx-font-weight: bold;
+}
+
+.table-cell {
+    -fx-text-fill: #e2e8f0;
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 0 8 0 8;
+}

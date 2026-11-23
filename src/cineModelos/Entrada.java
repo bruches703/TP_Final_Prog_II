@@ -9,9 +9,21 @@ package cineModelos;
  * @author Bruches
  */
 public abstract class Entrada {
+
     private double precio;
-    
-    // Getter y setter------ inicio
+    private Butaca butaca;
+    private TipoEntrada tipoEntrada;
+
+    public Entrada(double precio) {
+        this.precio = precio;
+        this.tipoEntrada = TipoEntrada.GENERAL;
+    }
+
+    public Entrada(Butaca butaca, TipoEntrada tipoEntrada, double precioBase) {
+        this.butaca = butaca;
+        this.tipoEntrada = tipoEntrada != null ? tipoEntrada : TipoEntrada.GENERAL;
+        this.precio = this.tipoEntrada.calcularPrecioUnitario(precioBase);
+    }
 
     public double getPrecio() {
         return precio;
@@ -20,16 +32,29 @@ public abstract class Entrada {
     public void setPrecio(double precio) {
         this.precio = precio;
     }
-    // Getter y setter --- Fin
-    
-        public Entrada(double precio) {
-        this.precio = precio;
+
+    public Butaca getButaca() {
+        return butaca;
+    }
+
+    public void setButaca(Butaca butaca) {
+        this.butaca = butaca;
+    }
+
+    public TipoEntrada getTipoEntrada() {
+        return tipoEntrada;
+    }
+
+    public void setTipoEntrada(TipoEntrada tipoEntrada) {
+        this.tipoEntrada = tipoEntrada;
     }
 
     @Override
     public String toString() {
-        return "Entrada{" + "precio=" + precio + '}';
-    }
-        
-        
+        String butacaStr = butaca != null
+                ? ("F" + butaca.getFila() + "-A" + butaca.getAsiento())
+                : "Sin butaca";
+        String tipoStr = tipoEntrada != null ? tipoEntrada.getEtiqueta() : "General";
+        return "Entrada{" + butacaStr + ", tipo=" + tipoStr + ", precio=" + precio + "}";
+    }  
 }

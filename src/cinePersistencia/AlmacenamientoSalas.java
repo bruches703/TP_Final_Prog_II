@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package persistencia;
+package cinePersistencia;
 
 import cineModelos.Butaca;
 import cineModelos.Sala;
@@ -163,5 +163,34 @@ public class AlmacenamientoSalas implements Serializable {
         }
 
         return butacas;
+    }
+
+    public void sobrescribirSalas(List<Sala> listaSalas) {
+        try {
+            Files.createDirectories(this.directorio);
+            Path archivo = this.directorio.resolve(ARCHIVO);
+
+            try (BufferedWriter writer = Files.newBufferedWriter(
+                    archivo,
+                    StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING)) {
+                if (listaSalas == null) {
+                    return;
+                }
+                for (Sala sala : listaSalas) {
+                    if (sala == null) {
+                        continue;
+                    }
+                    String linea = sala.getIdSala() + SEPARADOR
+                            + sala.getListaButacas() + SEPARADOR
+                            + sala.isEstaDisponible();
+                    writer.write(linea);
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al sobrescribir " + ARCHIVO + ": " + e.getMessage());
+        }
     }
 }

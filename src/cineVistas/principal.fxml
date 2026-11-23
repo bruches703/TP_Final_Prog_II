@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="panelPrincipal" prefHeight="620.0" prefWidth="980.0"
+            styleClass="root-app"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="cineController.ControladorPrincipal">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
+            <children>
+                <Label styleClass="topbar-brand" text="CINE | Sistema de reservas" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label fx:id="lblTitulo" styleClass="topbar-sub" text="Cartelera" />
+            </children>
+        </HBox>
+    </top>
+    <left>
+        <VBox spacing="0" styleClass="sidebar">
+            <children>
+                <Button fx:id="btnCartelera" maxWidth="Infinity" onAction="#mostrarCartelera" styleClass="nav-btn, nav-btn-active" text="Cartelera" />
+                <Button fx:id="btnReservas" maxWidth="Infinity" onAction="#mostrarReservas" styleClass="nav-btn" text="Reservas" />
+                <Button fx:id="btnPeliculas" maxWidth="Infinity" onAction="#mostrarPeliculas" styleClass="nav-btn" text="Películas" />
+                <Button fx:id="btnSalas" maxWidth="Infinity" onAction="#mostrarSalas" styleClass="nav-btn" text="Salas" />
+                <Button fx:id="btnFunciones" maxWidth="Infinity" onAction="#mostrarFunciones" styleClass="nav-btn" text="Funciones" />
+                <Button fx:id="btnInicio" maxWidth="Infinity" onAction="#mostrarInicio" styleClass="nav-btn" text="Inicio" />
+                <Region VBox.vgrow="ALWAYS" />
+                <Label style="-fx-padding: 12 18 12 18;" styleClass="hint-text" text="Navegación global" />
+            </children>
+        </VBox>
+    </left>
+    <center>
+        <VBox fx:id="contenedorCentro" styleClass="content-area" />
+    </center>
+</BorderPane>

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package persistencia;
+package cinePersistencia;
 
 import cineModelos.Butaca;
 import cineModelos.Reserva;
@@ -18,7 +18,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
 /**
  *
  * @author bruch
@@ -36,11 +35,7 @@ public class AlmacenamientoReserva implements Serializable {
     }
 
     public AlmacenamientoReserva(Path directorio) {
-        if (directorio != null) {
-            this.directorio = directorio;
-        } else {
-            this.directorio = Path.of("datasave");
-        }
+        this.directorio = (directorio != null) ? directorio : Path.of("datasave");
     }
 
     public void almacenarReserva(Reserva reserva) {
@@ -87,6 +82,38 @@ public class AlmacenamientoReserva implements Serializable {
             }
         } catch (IOException e) {
             System.err.println("Error al guardar la reserva en el archivo: " + e.getMessage());
+        }
+    }
+
+    public void reescribirReservas(List<Reserva> listaReservas) {
+        try {
+            Files.createDirectories(this.directorio);
+            Path archivo = this.directorio.resolve(ARCHIVO);
+
+            try (BufferedWriter writer = Files.newBufferedWriter(
+                    archivo,
+                    StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING)) {
+                if (listaReservas == null) {
+                    return;
+                }
+                for (Reserva reserva : listaReservas) {
+                    if (reserva == null) {
+                        continue;
+                    }
+                    String codigo = (reserva.getCodigo() != null) ? reserva.getCodigo() : "";
+                    String linea = codigo + SEPARADOR
+                            + reserva.isEstadoDeReserva() + SEPARADOR
+                            + "-1" + SEPARADOR
+                            + "" + SEPARADOR
+                            + reserva.getImporte();
+                    writer.write(linea);
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al reescribir " + ARCHIVO + ": " + e.getMessage());
         }
     }
 

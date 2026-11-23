@@ -7,7 +7,7 @@ package cineModelos;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Scanner;
-import persistencia.AlmacenamientoReserva;
+import cinePersistencia.AlmacenamientoReserva;
 
 /**
  *

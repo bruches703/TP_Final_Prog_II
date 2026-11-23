@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="16.0" styleClass="content-area"
+      xmlns="http://javafx.com/javafx/27.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="cineController.ControladorReservas">
+    <children>
+        <HBox alignment="CENTER_LEFT" spacing="12.0">
+            <children>
+                <Label styleClass="page-title" text="Reservas" />
+                <ComboBox fx:id="cmbFuncion" prefWidth="360.0" />
+            </children>
+        </HBox>
+
+        <Label fx:id="lblEncabezadoFuncion" styleClass="section-title" text="Seleccioná una función" />
+
+        <HBox spacing="24.0" VBox.vgrow="ALWAYS">
+            <children>
+                <!-- Zona izquierda: Pantalla + Grilla de butacas -->
+                <VBox alignment="TOP_CENTER" spacing="12.0" styleClass="summary-box" HBox.hgrow="ALWAYS">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Label styleClass="field-label" text="Tarifa para próxima butaca:" />
+                                <ComboBox fx:id="cmbTipoEntrada" prefWidth="210.0" />
+                            </children>
+                        </HBox>
+
+                        <Label fx:id="lblPantalla" maxWidth="1.7976931348623157E308"
+                               styleClass="screen-banner" text="PANTALLA" />
+
+                        <ScrollPane fitToWidth="true" fitToHeight="true" prefHeight="240.0" styleClass="transparent-scroll">
+                            <content>
+                                <GridPane fx:id="gridButacas" alignment="CENTER" hgap="10.0" vgap="10.0" />
+                            </content>
+                        </ScrollPane>
+
+                        <Label styleClass="hint-text"
+                               text="Blanca: disponible  |  Oscura: seleccionada  |  Tachada: ocupada" />
+
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <children>
+                                <Button fx:id="btnVolver" onAction="#volver"
+                                        styleClass="btn-secondary" text="← Volver" />
+                                <Button fx:id="btnLimpiarSeleccion" onAction="#limpiarSeleccion"
+                                        styleClass="btn-secondary" text="Limpiar selección" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+
+                <!-- Zona derecha: Resumen de selección + Reservas existentes -->
+                <VBox prefWidth="330.0" spacing="14.0">
+                    <children>
+                        <VBox spacing="10.0" styleClass="summary-box">
+                            <children>
+                                <Label styleClass="section-title" text="Resumen de selección" />
+                                <Label fx:id="lblButacasSeleccionadas" text="Butacas: -" wrapText="true" />
+                                <Label fx:id="lblCantidadButacas" text="Cantidad: 0" />
+                                <Label fx:id="lblPrecioTotal" text="Total: $ 0.00" />
+
+                                <VBox spacing="4.0">
+                                    <children>
+                                        <Label styleClass="field-label" text="Código (opcional)" />
+                                        <TextField fx:id="txtCodigo" promptText="Auto si vacío" />
+                                    </children>
+                                </VBox>
+
+                                <Button fx:id="btnConfirmarReserva" maxWidth="1.7976931348623157E308"
+                                        onAction="#confirmarReserva" styleClass="btn-primary"
+                                        text="Confirmar reserva →" />
+
+                                <Label fx:id="lblMensajeReserva" styleClass="hint-text" text="" wrapText="true" />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="8.0" styleClass="summary-box" VBox.vgrow="ALWAYS">
+                            <children>
+                                <Label styleClass="section-title" text="Reservas registradas" />
+
+                                <TableView fx:id="tblReservas" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colCodigo" prefWidth="120.0" text="Código" />
+                                        <TableColumn fx:id="colEstado" prefWidth="95.0" text="Estado" />
+                                        <TableColumn fx:id="colImporte" prefWidth="105.0" text="Importe" />
+                                    </columns>
+                                </TableView>
+
+                                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                    <children>
+                                        <TextField fx:id="txtCodigoCancelar" HBox.hgrow="ALWAYS"
+                                                   promptText="Código / ID de reserva" />
+                                        <Button fx:id="btnCancelarReserva" onAction="#cancelarReserva"
+                                                styleClass="btn-secondary" text="Cancelar reserva" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</VBox>

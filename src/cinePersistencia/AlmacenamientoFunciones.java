@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package persistencia;
+package cinePersistencia;
 
 import cineModelos.Funcion;
 import cineModelos.Pelicula;
@@ -191,5 +191,35 @@ public class AlmacenamientoFunciones implements Serializable {
             }
         }
         return null;
+    }
+    public void sobrescribirFunciones(List<Funcion> listaFunciones) {
+        try {
+            Files.createDirectories(this.directorio);
+            Path archivo = this.directorio.resolve(ARCHIVO);
+
+            try (BufferedWriter writer = Files.newBufferedWriter(
+                    archivo,
+                    StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING)) {
+                if (listaFunciones == null) {
+                    return;
+                }
+                for (Funcion funcion : listaFunciones) {
+                    if (funcion == null || funcion.getSala() == null || funcion.getPelicula() == null) {
+                        continue;
+                    }
+                    String linea = funcion.getFechaFuncion() + SEPARADOR
+                            + funcion.getHorarioFuncion() + SEPARADOR
+                            + funcion.getSala().getIdSala() + SEPARADOR
+                            + funcion.getPelicula().getTitulo() + SEPARADOR
+                            + funcion.getPrecio();
+                    writer.write(linea);
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error al sobrescribir " + ARCHIVO + ": " + e.getMessage());
+        }
     }
 }

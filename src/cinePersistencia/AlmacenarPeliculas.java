@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package persistencia;
+package cinePersistencia;
 
 import cineModelos.Pelicula;
 import java.io.BufferedReader;
@@ -27,12 +27,16 @@ public class AlmacenarPeliculas {
     private static final String NOMBRE_ARCHIVO = "peliculas.csv";
     private final Path directorio;
 
-    public AlmacenarPeliculas(Path directorio) {
-        this.directorio = (directorio != null) ? directorio : Path.of("datasave");
-    }
-
     public AlmacenarPeliculas() {
         this.directorio = Path.of("datasave");
+    }
+
+    public AlmacenarPeliculas(Path directorio) {
+        if (directorio != null) {
+            this.directorio = directorio;
+        } else {
+            this.directorio = Path.of("datasave");
+        }
     }
 
     public void agregarNuevaPelicula(Scanner leer, List<Pelicula> listaPeliculas) {
@@ -147,5 +151,34 @@ public class AlmacenarPeliculas {
             }
         }
         return false;
+    }
+
+    public void sobrescribirPeliculas(List<Pelicula> listaPeliculas) {
+        try {
+            Files.createDirectories(this.directorio);
+            Path archivo = this.directorio.resolve(NOMBRE_ARCHIVO);
+
+            try (BufferedWriter writer = Files.newBufferedWriter(
+                    archivo,
+                    StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING)) {
+                if (listaPeliculas == null) {
+                    return;
+                }
+                for (Pelicula pelicula:  listaPeliculas) {
+                    if (pelicula == null || pelicula.getTitulo() == null || pelicula.getDuracion() == null) {
+                        continue;
+                    }
+                    String linea = pelicula.getTitulo() + SEPARADOR
+                            + pelicula.getDuracion().toMinutes() + SEPARADOR
+                            + pelicula.getEstaActiva();
+                    writer.write(linea);
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al sobrescribir " + NOMBRE_ARCHIVO + ": " + e.getMessage());
+        }
     }
 }
