@@ -34,6 +34,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.util.StringConverter;
+
 /**
  *
  * @author Bruches
@@ -106,10 +107,23 @@ public class ControladorReservas {
     private final ObservableList<Funcion> funcionesObservables = FXCollections.observableArrayList();
     private final Map<Butaca, TipoEntrada> seleccionConTarifa = new LinkedHashMap<>();
 
+    /**
+     * Asigna la referencia al controlador principal para gestionar la navegación
+     * y la persistencia del estado.
+     *
+     * @param controladorPrincipal controlador principal de la aplicación.
+     */
     public void setControladorPrincipal(ControladorPrincipal controladorPrincipal) {
         this.controladorPrincipal = controladorPrincipal;
     }
 
+    /**
+     * Carga las listas de reservas y funciones en la vista y actualiza la
+     * grilla de butacas y el resumen.
+     *
+     * @param reservas lista de reservas registradas.
+     * @param funciones lista de funciones disponibles.
+     */
     public void setDatosReservas(List<Reserva> reservas, List<Funcion> funciones) {
         if (reservas != null) {
             this.listaReservasReferencia = reservas;
@@ -128,6 +142,10 @@ public class ControladorReservas {
         actualizarResumen();
     }
 
+    /**
+     * Inicializa los controles de la vista de reservas, sus listas observables,
+     * las columnas de la tabla y los listeners de selección.
+     */
     @FXML
     public void initialize() {
         tblReservas.setItems(reservasObservables);
@@ -152,6 +170,10 @@ public class ControladorReservas {
         });
     }
 
+    /**
+     * Configura el formato de visualización de los objetos {@link Funcion}
+     * dentro del {@link ComboBox}.
+     */
     private void configurarComboFuncion() {
         cmbFuncion.setConverter(new StringConverter<Funcion>() {
             @Override
@@ -174,6 +196,10 @@ public class ControladorReservas {
         });
     }
 
+    /**
+     * Configura las fábricas de valores de las columnas de la tabla de
+     * reservas.
+     */
     private void configurarColumnas() {
         colCodigo.setCellValueFactory(cell -> {
             Reserva r = cell.getValue();
@@ -192,6 +218,10 @@ public class ControladorReservas {
         });
     }
 
+    /**
+     * Construye o actualiza la grilla visual de butacas según la función y la
+     * sala seleccionadas.
+     */
     private void construirGrillaButacas() {
         gridButacas.getChildren().clear();
 
@@ -226,6 +256,14 @@ public class ControladorReservas {
         }
     }
 
+    /**
+     * Crea la celda visual de una butaca con su estilo según esté ocupada,
+     * seleccionada o disponible.
+     *
+     * @param butaca butaca a representar en la grilla.
+     * @param salaDisponible indica si la sala se encuentra habilitada.
+     * @return contenedor {@link StackPane} con la butaca renderizada.
+     */
     private StackPane crearCeldaButaca(Butaca butaca, boolean salaDisponible) {
         StackPane stack = new StackPane();
         stack.setPrefSize(56.0, 42.0);
@@ -263,6 +301,12 @@ public class ControladorReservas {
         return stack;
     }
 
+    /**
+     * Agrega o quita una butaca de la selección actual según la tarifa
+     * elegida y refresca la vista.
+     *
+     * @param butaca butaca seleccionada o deseleccionada.
+     */
     private void alternarSeleccion(Butaca butaca) {
         TipoEntrada elegida = (cmbTipoEntrada != null && cmbTipoEntrada.getValue() != null)
                 ? cmbTipoEntrada.getValue()
@@ -279,11 +323,25 @@ public class ControladorReservas {
         actualizarResumen();
     }
 
+    /**
+     * Genera la etiqueta visible de una butaca (por ejemplo, {@code A1} o
+     * {@code B2}) a partir de su fila y asiento.
+     *
+     * @param butaca butaca a formatear.
+     * @return etiqueta legible de la butaca.
+     */
     private String formatearEtiquetaButaca(Butaca butaca) {
         char letraFila = (char) ('A' + Math.max(0, butaca.getFila() - 1));
         return letraFila + String.valueOf(butaca.getAsiento());
     }
 
+    /**
+     * Calcula el importe total de las butacas actualmente seleccionadas según
+     * el precio base de la función y la tarifa de cada una.
+     *
+     * @param precioBase precio base de la función seleccionada.
+     * @return importe total acumulado.
+     */
     private double calcularTotalSeleccion(double precioBase) {
         double total = 0.0;
         for (TipoEntrada tipo : seleccionConTarifa.values()) {
@@ -292,6 +350,10 @@ public class ControladorReservas {
         return total;
     }
 
+    /**
+     * Actualiza las etiquetas de resumen de butacas seleccionadas, cantidad,
+     * total y estado del botón de confirmación.
+     */
     private void actualizarResumen() {
         Funcion funcion = cmbFuncion.getValue();
         double precioBase = (funcion != null) ? funcion.getPrecio() : 0.0;
@@ -320,6 +382,10 @@ public class ControladorReservas {
         btnConfirmarReserva.setDisable(false);
     }
 
+    /**
+     * Limpia las butacas seleccionadas actualmente y actualiza la grilla y el
+     * resumen.
+     */
     @FXML
     private void limpiarSeleccion() {
         seleccionConTarifa.clear();
@@ -328,6 +394,10 @@ public class ControladorReservas {
         actualizarResumen();
     }
 
+    /**
+     * Navega de regreso hacia la vista de cartelera mediante el controlador
+     * principal.
+     */
     @FXML
     private void volver() {
         if (controladorPrincipal != null) {
@@ -335,6 +405,10 @@ public class ControladorReservas {
         }
     }
 
+    /**
+     * Valida y confirma la reserva de las butacas seleccionadas, marca las
+     * butacas como ocupadas, actualiza la tabla y persiste el estado.
+     */
     @FXML
     private void confirmarReserva() {
         Funcion funcion = cmbFuncion.getValue();
@@ -386,7 +460,7 @@ public class ControladorReservas {
             Butaca b = entry.getKey();
             TipoEntrada tipo = entry.getValue();
 
-            Entrada entrada = new Entrada(b, tipo, precioBase) {};
+            Entrada entrada = new Entrada(b, tipo, precioBase);
             b.setEstaDisponible(false);
             reservadasAhora.add(b);
             entradasEmitidas.add(entrada);
@@ -424,6 +498,16 @@ public class ControladorReservas {
         mostrarVentanaConfirmacion(codigoFinal, funcion, detalleEntradas.toString(), cantidad, importeTotal);
     }
 
+    /**
+     * Muestra un diálogo informativo con el comprobante y el detalle de la
+     * reserva confirmada.
+     *
+     * @param codigo código asignado a la reserva.
+     * @param funcion función reservada.
+     * @param detalleEntradas desglose formateado de cada butaca y tarifa.
+     * @param cantidad cantidad total de butacas reservadas.
+     * @param total importe total abonado.
+     */
     private void mostrarVentanaConfirmacion(
             String codigo,
             Funcion funcion,
@@ -455,6 +539,10 @@ public class ControladorReservas {
         alerta.showAndWait();
     }
 
+    /**
+     * Cancela una reserva por código ingresado o fila seleccionada, libera las
+     * butacas asociadas si están registradas en memoria y persiste el estado.
+     */
     @FXML
     private void cancelarReserva() {
         String codigoBuscado = (txtCodigoCancelar != null && txtCodigoCancelar.getText() != null)

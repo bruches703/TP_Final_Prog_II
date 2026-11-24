@@ -73,6 +73,7 @@
                         <Button fx:id="btnModificarSala" maxWidth="1.7976931348623157E308"
                                 onAction="#modificarSala" styleClass="btn-secondary"
                                 text="Modificar seleccionada" />
+                        
 
                         <Label fx:id="lblMensaje" styleClass="hint-text" text="" wrapText="true" />
                     </children>

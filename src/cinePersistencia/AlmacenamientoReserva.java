@@ -18,6 +18,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
 /**
  *
  * @author bruch
@@ -27,6 +28,7 @@ public class AlmacenamientoReserva implements Serializable {
     private static final long serialVersionUID = 4001L;
     private static final String ARCHIVO = "reservas.csv";
     private static final String SEPARADOR = ";";
+    private static final Pattern PATRON_SEPARADOR = Pattern.compile(Pattern.quote(SEPARADOR));
 
     private final Path directorio;
 
@@ -45,9 +47,10 @@ public class AlmacenamientoReserva implements Serializable {
     /**
      * Toma una reserva y la guarda con los campos de sala y una lista de Butacas
      * que pueden ser 1 o mas, un codigo de reserva y un importe total
-     * @param reserva 
+     *
+     * @param reserva
      * @param sala
-     * @param butacasReservadas 
+     * @param butacasReservadas
      */
     public void almacenarReserva(Reserva reserva, Sala sala, List<Butaca> butacasReservadas) {
         if (reserva == null) {
@@ -91,8 +94,7 @@ public class AlmacenamientoReserva implements Serializable {
             System.err.println("Error al guardar la reserva en el archivo: " + e.getMessage());
         }
     }
-    
-    
+
     public void reescribirReservas(List<Reserva> listaReservas) {
         try {
             Files.createDirectories(this.directorio);
@@ -127,6 +129,7 @@ public class AlmacenamientoReserva implements Serializable {
 
     /**
      * Carga las reservas desde el directorio y las reconstruye en una lista
+     *
      * @return Devuelve una lista de reservas cargadas desde el directorio.
      */
     public List<Reserva> cargarReservas() {
@@ -144,7 +147,7 @@ public class AlmacenamientoReserva implements Serializable {
                     continue;
                 }
 
-                String[] partes = linea.split(Pattern.quote(SEPARADOR));
+                String[] partes = PATRON_SEPARADOR.split(linea);
                 if (partes.length < 5) {
                     System.out.println("Linea con formato invalido en " + ARCHIVO + ": " + linea);
                     continue;
@@ -170,13 +173,14 @@ public class AlmacenamientoReserva implements Serializable {
 
         return reservasCargadas;
     }
+
     /**
      * Representa si el codigo buscado existe o no en la lista
+     *
      * @param listaReserva Lista de reserva donde se busca el codigo
      * @param codigoBuscado codigo de reserva que se busca en la lista
-     * @return Devuelve true si existe, la reserva no es null o si los codigos de 
-     * las reservas no son null.
-     * Si no lo encuentra, devuelve false.
+     * @return Devuelve true si existe, la reserva no es null o si los codigos de
+     * las reservas no son null. Si no lo encuentra, devuelve false.
      */
     private boolean existeCodigoEnLista(List<Reserva> listaReserva, String codigoBuscado) {
         for (Reserva reserva : listaReserva) {
@@ -187,11 +191,11 @@ public class AlmacenamientoReserva implements Serializable {
         return false;
     }
 
-    
     /**
      * Crea una cadena con la lista de butacas
+     *
      * @param butacasReservadas Lista de butacas que se mostraran en pantalla
-     * @return 
+     * @return
      */
     private String formatearButacas(List<Butaca> butacasReservadas) {
         if (butacasReservadas == null || butacasReservadas.isEmpty()) {
@@ -217,13 +221,15 @@ public class AlmacenamientoReserva implements Serializable {
             return false;
         }
 
+        Pattern patron = sep.equals(SEPARADOR) ? PATRON_SEPARADOR : Pattern.compile(Pattern.quote(sep));
+
         try {
             List<String> lineas = Files.readAllLines(archivo, StandardCharsets.UTF_8);
             for (String linea : lineas) {
                 if (linea.trim().isEmpty()) {
                     continue;
                 }
-                String[] partes = linea.split(Pattern.quote(sep));
+                String[] partes = patron.split(linea);
                 if (partes.length > 0 && partes[0].trim().equals(codigoBuscado)) {
                     return true;
                 }
