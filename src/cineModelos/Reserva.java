@@ -80,10 +80,14 @@ public class Reserva implements Serializable {
     }
 
     /**
-     * 
-     * @param listaDeFunciones
-     * @param leer
-     * @return 
+     * Realiza nueva reserva pidiendo al usuario los ingresos de los parametros.
+     * Los mismos se validan y se guardan. Si no hay funciones, no se puede realizar
+     * ninguna reserva.
+     * @param listaDeFunciones Lista de funciones que se presentan para realizar
+     * la nueva reserva.
+     * @param leer herramienta para leer lo ingresado
+     * @return Devuelve un objeto tipo Reserva con parametros ingresados por
+     * el usuario.
      */
     public static Reserva ingresarNuevaResarva(List<Funcion> listaDeFunciones, Scanner leer) {
         if (listaDeFunciones == null || listaDeFunciones.isEmpty()) {
@@ -93,7 +97,9 @@ public class Reserva implements Serializable {
 
         Funcion funcionEscogida = null;
         while (funcionEscogida == null) {
-            Funcion.mostrarFunciones(listaDeFunciones);
+            Funcion.mostrarFunciones(listaDeFunciones); 
+            
+            // Ingreso de Id
             System.out.println("Ingrese el ID de la funcion:");
             String entrada = leer.nextLine().trim();
 

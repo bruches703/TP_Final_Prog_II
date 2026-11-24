@@ -85,35 +85,44 @@ public class ControladorCartelera {
         aplicarFiltros("Todas las películas", null);
     }
 
-    private void cargarComboPeliculas(List<Pelicula> peliculas) {
+    /**
+     * Se carga la lista de peliculas en la tabla.
+     * @param listaPeliculas lista de peliculas a mostrar en la tabla
+     */
+    private void cargarComboPeliculas(List<Pelicula> listaPeliculas) {
         ObservableList<String> opciones = FXCollections.observableArrayList();
         opciones.add("Todas las películas");
-        if (peliculas != null) {
-            for (Pelicula p : peliculas) {
-                if (p != null && p.getEstaActiva() && p.getTitulo() != null
-                        && !opciones.contains(p.getTitulo())) {
-                    opciones.add(p.getTitulo());
+        if (listaPeliculas != null) {
+            for (Pelicula pelicula : listaPeliculas) {
+                if (pelicula != null && pelicula.getEstaActiva() && pelicula.getTitulo() != null
+                        && !opciones.contains(pelicula.getTitulo())) {
+                    opciones.add(pelicula.getTitulo());
                 }
             }
         }
         cmbPelicula.setItems(opciones);
         cmbPelicula.getSelectionModel().selectFirst();
     }
-
+    
+    
+    /**
+     * Configura como se vera cada fila de las funciones de la cartelera. Muestra
+     * los datos de las funciones y las presenta en cada celda
+     */
     private void configurarColumnas() {
         colPelicula.setCellValueFactory(cell -> {
-            Pelicula p = cell.getValue().getPelicula();
-            return new SimpleStringProperty(p != null && p.getTitulo() != null ? p.getTitulo() : "");
+            Pelicula pelicula = cell.getValue().getPelicula();
+            return new SimpleStringProperty(pelicula != null && pelicula.getTitulo() != null ? pelicula.getTitulo() : "");
         });
 
         colSala.setCellValueFactory(cell -> {
-            Sala s = cell.getValue().getSala();
-            return new SimpleStringProperty(s != null ? "Sala " + s.getIdSala() : "");
+            Sala sala = cell.getValue().getSala();
+            return new SimpleStringProperty(sala != null ? "Sala " + sala.getIdSala() : "");
         });
 
         colHorario.setCellValueFactory(cell -> {
-            Funcion f = cell.getValue();
-            String hora = f.getHorarioFuncion();
+            Funcion funcion = cell.getValue();
+            String hora = funcion.getHorarioFuncion();
             return new SimpleStringProperty(hora != null ? hora : "");
         });
 
@@ -141,6 +150,7 @@ public class ControladorCartelera {
         });
     }
 
+
     @FXML
     private void buscarFunciones() {
         String peliculaSeleccionada = cmbPelicula.getValue();
@@ -155,6 +165,11 @@ public class ControladorCartelera {
         aplicarFiltros("Todas las películas", null);
     }
 
+    /**
+     * Aplica filtros para buscar funciones, buscando coincidencias
+     * @param tituloPelicula Tipo String con el titulo de la pelicula
+     * @param fecha tipo LocalDate con la fecha de la funcion.
+     */
     private void aplicarFiltros(String tituloPelicula, LocalDate fecha) {
         List<Funcion> filtradas = new ArrayList<>();
         for (Funcion f : todasLasFunciones) {

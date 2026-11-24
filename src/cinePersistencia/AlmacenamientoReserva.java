@@ -42,6 +42,13 @@ public class AlmacenamientoReserva implements Serializable {
         almacenarReserva(reserva, null, null);
     }
 
+    /**
+     * Toma una reserva y la guarda con los campos de sala y una lista de Butacas
+     * que pueden ser 1 o mas, un codigo de reserva y un importe total
+     * @param reserva 
+     * @param sala
+     * @param butacasReservadas 
+     */
     public void almacenarReserva(Reserva reserva, Sala sala, List<Butaca> butacasReservadas) {
         if (reserva == null) {
             System.out.println("No se puede guardar una reserva nula.");
@@ -84,7 +91,8 @@ public class AlmacenamientoReserva implements Serializable {
             System.err.println("Error al guardar la reserva en el archivo: " + e.getMessage());
         }
     }
-
+    
+    
     public void reescribirReservas(List<Reserva> listaReservas) {
         try {
             Files.createDirectories(this.directorio);
@@ -117,6 +125,10 @@ public class AlmacenamientoReserva implements Serializable {
         }
     }
 
+    /**
+     * Carga las reservas desde el directorio y las reconstruye en una lista
+     * @return Devuelve una lista de reservas cargadas desde el directorio.
+     */
     public List<Reserva> cargarReservas() {
         List<Reserva> reservasCargadas = new ArrayList<>();
         Path archivo = this.directorio.resolve(ARCHIVO);
@@ -158,33 +170,46 @@ public class AlmacenamientoReserva implements Serializable {
 
         return reservasCargadas;
     }
-
-    private boolean existeCodigoEnLista(List<Reserva> lista, String codigoBuscado) {
-        for (Reserva r : lista) {
-            if (r != null && r.getCodigo() != null && r.getCodigo().equals(codigoBuscado)) {
+    /**
+     * Representa si el codigo buscado existe o no en la lista
+     * @param listaReserva Lista de reserva donde se busca el codigo
+     * @param codigoBuscado codigo de reserva que se busca en la lista
+     * @return Devuelve true si existe, la reserva no es null o si los codigos de 
+     * las reservas no son null.
+     * Si no lo encuentra, devuelve false.
+     */
+    private boolean existeCodigoEnLista(List<Reserva> listaReserva, String codigoBuscado) {
+        for (Reserva reserva : listaReserva) {
+            if (reserva != null && reserva.getCodigo() != null && reserva.getCodigo().equals(codigoBuscado)) {
                 return true;
             }
         }
         return false;
     }
 
+    
+    /**
+     * Crea una cadena con la lista de butacas
+     * @param butacasReservadas Lista de butacas que se mostraran en pantalla
+     * @return 
+     */
     private String formatearButacas(List<Butaca> butacasReservadas) {
         if (butacasReservadas == null || butacasReservadas.isEmpty()) {
             return "";
         }
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder nuevoString = new StringBuilder();
         for (int i = 0; i < butacasReservadas.size(); i++) {
-            Butaca b = butacasReservadas.get(i);
-            if (b == null) {
+            Butaca butaca = butacasReservadas.get(i);
+            if (butaca == null) {
                 continue;
             }
-            if (sb.length() > 0) {
-                sb.append(" | ");
+            if (nuevoString.length() > 0) {
+                nuevoString.append(" | ");
             }
-            sb.append("F").append(b.getFila()).append("-A").append(b.getAsiento());
+            nuevoString.append("F").append(butaca.getFila()).append("-A").append(butaca.getAsiento());
         }
-        return sb.toString();
+        return nuevoString.toString();
     }
 
     private boolean existeCodigoEnArchivo(Path archivo, String codigoBuscado, String sep) {

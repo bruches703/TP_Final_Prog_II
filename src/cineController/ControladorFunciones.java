@@ -150,15 +150,19 @@ public class ControladorFunciones {
         });
     }
 
+    /**
+     * Configura los datos de la pelicula para convertirlo en String y
+     * mostrarlo por consola
+     */
     private void configurarCombos() {
         cmbPelicula.setConverter(new StringConverter<Pelicula>() {
             @Override
-            public String toString(Pelicula p) {
-                if (p == null) {
+            public String toString(Pelicula pelicula) {
+                if (pelicula == null) {
                     return "";
                 }
-                String titulo = p.getTitulo() != null ? p.getTitulo() : "Sin título";
-                long min = p.getDuracion() != null ? p.getDuracion().toMinutes() : 0L;
+                String titulo = pelicula.getTitulo() != null ? pelicula.getTitulo() : "Sin título";
+                long min = pelicula.getDuracion() != null ? pelicula.getDuracion().toMinutes() : 0L;
                 return titulo + " (" + min + " min)";
             }
 
@@ -185,36 +189,43 @@ public class ControladorFunciones {
         });
     }
 
+    /**
+     * Configura las columnas para mostrar los parametros de las funciones
+     */
     private void configurarColumnas() {
         colPelicula.setCellValueFactory(cell -> {
-            Funcion f = cell.getValue();
-            Pelicula p = (f != null) ? f.getPelicula() : null;
-            return new SimpleStringProperty(p != null && p.getTitulo() != null ? p.getTitulo() : "");
+            Funcion funcion = cell.getValue();
+            Pelicula pelicula = (funcion != null) ? funcion.getPelicula() : null;
+            return new SimpleStringProperty(pelicula != null && pelicula.getTitulo() != null ? pelicula.getTitulo() : "");
         });
 
         colSala.setCellValueFactory(cell -> {
-            Funcion f = cell.getValue();
-            Sala s = (f != null) ? f.getSala() : null;
-            return new SimpleStringProperty(s != null ? "Sala " + s.getIdSala() : "");
+            Funcion funcion = cell.getValue();
+            Sala sala = (funcion != null) ? funcion.getSala() : null;
+            return new SimpleStringProperty(sala != null ? "Sala " + sala.getIdSala() : "");
         });
 
         colFecha.setCellValueFactory(cell -> {
-            Funcion f = cell.getValue();
-            return new SimpleStringProperty(f != null && f.getFecha() != null ? f.getFecha().toString() : "");
+            Funcion funcion = cell.getValue();
+            return new SimpleStringProperty(funcion != null && funcion.getFecha() != null ? funcion.getFecha().toString() : "");
         });
 
         colHorario.setCellValueFactory(cell -> {
-            Funcion f = cell.getValue();
-            return new SimpleStringProperty(f != null && f.getHorario() != null ? f.getHorario().toString() : "");
+            Funcion funcion = cell.getValue();
+            return new SimpleStringProperty(funcion != null && funcion.getHorario() != null ? funcion.getHorario().toString() : "");
         });
 
         colPrecio.setCellValueFactory(cell -> {
-            Funcion f = cell.getValue();
-            double precio = (f != null) ? f.getPrecio() : 0.0;
+            Funcion funcion = cell.getValue();
+            double precio = (funcion != null) ? funcion.getPrecio() : 0.0;
             return new SimpleStringProperty(String.format("$ %.2f", precio));
         });
     }
 
+    /**
+     * Se agregan los parametros nuevos y al apretar el boton "Agregar" se guardan
+     * en la lista y se muestran.
+     */
     @FXML
     private void agregarFuncion() {
         DatosFormularioFuncion datos = validarYLeerFormulario();
@@ -259,6 +270,10 @@ public class ControladorFunciones {
         lblMensaje.setText("Función agregada y guardada en el estado del cine.");
     }
 
+    /**
+     * Se selecciona una funcion y al precionar "Modificar" se establecen los nuevos
+     * campos
+     */
     @FXML
     private void modificarFuncion() {
         Funcion seleccionada = tblFunciones.getSelectionModel().getSelectedItem();
@@ -312,6 +327,9 @@ public class ControladorFunciones {
         lblMensaje.setText("Función modificada y guardada en el estado del cine.");
     }
 
+    /**
+     * Se selecciona una funcion y se elimina al precionar el boton
+     */
     @FXML
     private void eliminarFuncion() {
         Funcion seleccionada = tblFunciones.getSelectionModel().getSelectedItem();
@@ -338,7 +356,9 @@ public class ControladorFunciones {
         lblMensaje.setText("Función eliminada y guardada en el estado del cine.");
     }
 
+    
     private DatosFormularioFuncion validarYLeerFormulario() {
+        // Si los objetos no son null, se inicializan con el valor establecido
         Pelicula pelicula = (cmbPelicula != null) ? cmbPelicula.getValue() : null;
         Sala sala = (cmbSala != null) ? cmbSala.getValue() : null;
         LocalDate fecha = (dpFecha != null) ? dpFecha.getValue() : null;

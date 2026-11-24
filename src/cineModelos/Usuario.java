@@ -8,6 +8,7 @@ package cineModelos;
  *
  * @author Bruches
  */
+/*
 public class Usuario {
     private int dni;
     private String nombre;
@@ -51,7 +52,7 @@ public class Usuario {
     public String toString() {
         return "Cliente{" + "dni=" + dni + ", nombre=" + nombre + ", esAdmin=" + esAdmin + '}';
     }
-
-    
-    
 }
+    
+    */
+

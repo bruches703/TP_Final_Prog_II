@@ -213,6 +213,11 @@ public class Funcion implements Serializable {
         return new Funcion(idFuncion, fechaFuncion, horarioFuncion, salaParaFuncion, peliculaParaFuncion, 5000);
     }
 
+    /**
+     * Muestra todas las funciones, de manera ordenada, de una lista de funciones.
+     * De ser una lista nula o vacia muestra que no hay funciones.
+     * @param listaDeFunciones  Lista de funciones a mostrar.
+     */
     public static void mostrarFunciones(List<Funcion> listaDeFunciones) {
         if (listaDeFunciones == null || listaDeFunciones.isEmpty()) {
             System.out.println("No hay funciones previstas");

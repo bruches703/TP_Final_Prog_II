@@ -46,6 +46,15 @@ public class AlmacenamientoFunciones implements Serializable {
         }
     }
 
+    /**
+     * Pide que ingrese los datos de la nueva sala, los verifica que no exista 
+     * por ID y de tener todos los parametros aptos, lo almacena en la lista.
+     * 
+     * @param leer herramienta tipo Scanner para leer lo ingresado.
+     * @param listaSalas Lista de salas para las funciones
+     * @param listaPeliculas Lista de Peliculas para las funciones
+     * @param listaDeFunciones Lista de funciones donde se agregara la nueva
+     */
     public void agregarNuevaFuncion(Scanner leer, List<Sala> listaSalas, List<Pelicula> listaPeliculas, List<Funcion> listaDeFunciones) {
         Funcion nuevaFuncion = Funcion.nuevaFuncion(leer, listaSalas, listaPeliculas, listaDeFunciones);
         if (nuevaFuncion == null) {
@@ -93,6 +102,11 @@ public class AlmacenamientoFunciones implements Serializable {
         almacenarFuncion(nuevaFuncion);
     }
 
+    /**
+     * Almacena la nueva funcion y la guarda en un directorio. De no existir lo
+     * crea. De encontrar el directorio, lo guarda de modo APPEND.
+     * @param funcion Tipo Funcion que se guardara en el directorio
+     */
     public void almacenarFuncion(Funcion funcion) {
         if (funcion == null) {
             System.out.println("No se puede guardar una funcion nula.");
@@ -111,6 +125,7 @@ public class AlmacenamientoFunciones implements Serializable {
             Files.createDirectories(this.directorio);
             Path archivo = this.directorio.resolve(ARCHIVO);
 
+            // Se convierte todo a string y se lo separa por ';' (SEPARADOR)
             String linea = funcion.getFechaFuncion() + SEPARADOR
                     + funcion.getHorarioFuncion() + SEPARADOR
                     + funcion.getSala().getIdSala() + SEPARADOR
@@ -130,6 +145,13 @@ public class AlmacenamientoFunciones implements Serializable {
         }
     }
 
+    /**
+     * Lee el archivo de funciones y carga una lista con los registros de las 
+     * salas y peliculas
+     * @param listaSalas lista de salas que se vinculan a las funciones
+     * @param listaPeliculas lista de peliculas que estan vinculadas a las funciones
+     * @return  Devuelve una lista de funciones cargadas desde el directorio
+     */
     public List<Funcion> cargarFunciones(List<Sala> listaSalas, List<Pelicula> listaPeliculas) {
         List<Funcion> funcionesCargadas = new ArrayList<>();
         Path archivo = this.directorio.resolve(ARCHIVO);
@@ -180,6 +202,12 @@ public class AlmacenamientoFunciones implements Serializable {
         return funcionesCargadas;
     }
 
+    /**
+     * Busca una pelicula por titulo desde una lista
+     * @param listaPeliculas lista de peliculas a buscar
+     * @param titulo Tipo String, titulo a buscar en la lista de peliculas
+     * @return Devuelve un objeto tipo Pelicula
+     */
     private Pelicula buscarPeliculaPorTitulo(List<Pelicula> listaPeliculas, String titulo) {
         if (listaPeliculas == null || titulo == null || titulo.isEmpty()) {
             return null;
@@ -192,6 +220,12 @@ public class AlmacenamientoFunciones implements Serializable {
         }
         return null;
     }
+    
+    /**
+     * Para no repetir datos almacenados con los mismos parametros, se sobreescriben
+     * en el archivo del directorio
+     * @param listaFunciones Lista de funciones
+     */
     public void sobrescribirFunciones(List<Funcion> listaFunciones) {
         try {
             Files.createDirectories(this.directorio);

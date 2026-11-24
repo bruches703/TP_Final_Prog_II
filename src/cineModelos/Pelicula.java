@@ -25,7 +25,6 @@ public class Pelicula implements Serializable {
     public Pelicula() {
     }
 
-    
     public Pelicula(String titulo, Duration duracion, boolean estaActiva) {
         this.titulo = titulo;
         this.duracion = duracion;
@@ -90,14 +89,14 @@ public class Pelicula implements Serializable {
     }
 
     /**
-     *  Busca un pelicula por el titulo en una lista de peliculas
-     * 
-     * @param listaPelicula lista de peliculas a donde se buscara por titulo.
-     * @param tituloBuscado tipo String, representa el titulo de la pelicula buscada
+     * Busca un pelicula por el titulo en una lista de peliculas
      *
-     * @return 
-     *      De encontrar la pelicula, devuelve un objeto de tipo Pelicula.
-     *      De no encontrarla o de haber un error devuelve null.
+     * @param listaPelicula lista de peliculas a donde se buscara por titulo.
+     * @param tituloBuscado tipo String, representa el titulo de la pelicula
+     * buscada
+     *
+     * @return De encontrar la pelicula, devuelve un objeto de tipo Pelicula. De
+     * no encontrarla o de haber un error devuelve null.
      */
     public static Pelicula buscarPeliculaPorTitulo(List<Pelicula> listaPelicula, String tituloBuscado) {
         if (listaPelicula == null || tituloBuscado == null) {
@@ -114,8 +113,9 @@ public class Pelicula implements Serializable {
     }
 
     /**
-     * 
-     * @param listaDePeliculas 
+     * Muestra de forma ordenada una lista de peliculas de manera ordenada
+     *
+     * @param listaDePeliculas lista de peliculas a mostrar.
      */
     public static void mostrarListaDePelicula(List<Pelicula> listaDePeliculas) {
         if (listaDePeliculas == null || listaDePeliculas.isEmpty()) {
@@ -127,21 +127,31 @@ public class Pelicula implements Serializable {
             if (pelicula == null) {
                 continue;
             }
-            System.out.println("Titulo: " + pelicula.getTitulo());
-            System.out.println("Duracion: " + pelicula.getDuracionFormateada());
-            System.out.println("Estado: " + (pelicula.getEstaActiva() ? "Activa" : "Inactiva"));
-            System.out.println("-----------");
+            mostrarUnaPelicula(pelicula);
+
         }
+    }
+    /**
+     * Muestra los parametros de una pelicula de forma ordenada
+     * @param pelicula tipo Pelicula a mostrar.
+     */
+    public static void mostrarUnaPelicula(Pelicula pelicula) {
+        if (pelicula == null) {
+            return;
+        }
+        System.out.println("Titulo: " + pelicula.getTitulo());
+        System.out.println("Duracion: " + pelicula.getDuracionFormateada());
+        System.out.println("Estado: " + (pelicula.getEstaActiva() ? "Activa" : "Inactiva"));
+        System.out.println("-----------");
     }
 
     /**
      * Muestra la lista de peliculas y pide que ingrese un titulo para buscarlo.
-     * 
+     *
      * @param leer tipo Scanner, herramienta para leer lo ingresado.
      * @param listaPeliculas tipo lista de Pelicula donde se buscara el titulo
-     * @return 
-     *      Devuelve un objeto de tipo pelicula si lo encuentra por titulo.
-     *      De no encontrarlo o haber algun error, devuelve null.
+     * @return Devuelve un objeto de tipo pelicula si lo encuentra por titulo.
+     * De no encontrarlo o haber algun error, devuelve null.
      */
     public static Pelicula seleccionarPelicula(Scanner leer, List<Pelicula> listaPeliculas) {
         if (listaPeliculas == null || listaPeliculas.isEmpty()) {
