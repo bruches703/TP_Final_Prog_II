@@ -4,6 +4,7 @@
  */
 package cineModelos;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import utilidadesHerramientas.*;
@@ -12,7 +13,10 @@ import utilidadesHerramientas.*;
  *
  * @author Bruches
  */
-public class Butaca {
+public class Butaca implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    
     private int fila;
     private int asiento;
     private boolean estaDisponible;
@@ -77,15 +81,10 @@ public class Butaca {
         }
          return listaButacas;
     }
-    
-    
-
 
     @Override
     public String toString() {
         return "Butaca{" + "fila=" + fila + ", asiento=" + asiento + ", estaDisponible=" + estaDisponible + '}';
     }
-    
-    
     
 }

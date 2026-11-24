@@ -4,6 +4,7 @@
  */
 package cineModelos;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,7 +15,9 @@ import utilidadesHerramientas.Validaciones;
  *
  * @author Bruches
  */
-public class Reserva {
+public class Reserva implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private boolean estadoDeReserva;
     private double importe;

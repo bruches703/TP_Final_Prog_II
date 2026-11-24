@@ -25,7 +25,7 @@
                         <TableView fx:id="tblSalas" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="colIdSala" prefWidth="95.0" text="ID Sala" />
-                                <TableColumn fx:id="colButacas" prefWidth="150.0" text="Total butacas" />
+                                <TableColumn fx:id="colCapacidad" prefWidth="150.0" text="Total butacas" />
                                 <TableColumn fx:id="colDisponible" prefWidth="135.0" text="Estado" />
                             </columns>
                         </TableView>

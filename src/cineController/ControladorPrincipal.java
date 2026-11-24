@@ -9,10 +9,12 @@ import cineModelos.Pelicula;
 import cineModelos.Reserva;
 import cineModelos.Sala;
 import cineModelos.SucursalCine;
+import cinePersistencia.AlmacenamientoEstadoCine;
 import cinePersistencia.AlmacenamientoFunciones;
 import cinePersistencia.AlmacenamientoReserva;
 import cinePersistencia.AlmacenamientoSalas;
 import cinePersistencia.AlmacenarPeliculas;
+import cinePersistencia.PersistenciaException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -24,6 +26,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 
+/**
+ *
+ * @author Bruches
+ */
 /**
  *
  * @author Bruches
@@ -61,17 +67,48 @@ public class ControladorPrincipal {
     private List<Reserva> reservas = new ArrayList<>();
     private String estadoPersistencia = "Datos cargados desde datasave/";
 
-    private final AlmacenamientoReserva almacenReservas =
-            new AlmacenamientoReserva(Path.of("datasave"));
+    private final AlmacenamientoReserva almacenReservas
+            = new AlmacenamientoReserva(Path.of("datasave"));
 
-    private final AlmacenarPeliculas almacenPeliculas =
-            new AlmacenarPeliculas(Path.of("datasave"));
+    private final AlmacenarPeliculas almacenPeliculas
+            = new AlmacenarPeliculas(Path.of("datasave"));
 
-    private final AlmacenamientoFunciones almacenFunciones =
-            new AlmacenamientoFunciones(Path.of("datasave"));
+    private final AlmacenamientoFunciones almacenFunciones
+            = new AlmacenamientoFunciones(Path.of("datasave"));
 
-    private final AlmacenamientoSalas almacenSalas =
-            new AlmacenamientoSalas(Path.of("datasave"));
+    private final AlmacenamientoSalas almacenSalas
+            = new AlmacenamientoSalas(Path.of("datasave"));
+
+    private AlmacenamientoEstadoCine almacenEstado = new AlmacenamientoEstadoCine();
+
+    public void setAlmacenEstado(AlmacenamientoEstadoCine almacenEstado) {
+        if (almacenEstado != null) {
+            this.almacenEstado = almacenEstado;
+        }
+    }
+
+    public AlmacenamientoEstadoCine getAlmacenEstado() {
+        return almacenEstado;
+    }
+
+    public boolean persistirEstadoActual(Label lblRetroalimentacion) {
+        try {
+            if (sucursalCine == null) {
+                sucursalCine = almacenEstado.crearSucursalInicial();
+            }
+            sucursalCine.setPeliculas(new ArrayList<>(peliculas));
+            sucursalCine.setSalas(new ArrayList<>(salas));
+            sucursalCine.setFunciones(new ArrayList<>(funciones));
+            sucursalCine.setReservas(new ArrayList<>(reservas));
+            almacenEstado.guardarSucursal(sucursalCine);
+            return true;
+        } catch (PersistenciaException ex) {
+            if (lblRetroalimentacion != null) {
+                lblRetroalimentacion.setText(ex.getMessage());
+            }
+            return false;
+        }
+    }
 
     public AlmacenamientoReserva getAlmacenReservas() {
         return almacenReservas;
@@ -151,13 +188,20 @@ public class ControladorPrincipal {
             return;
         }
         switch (destino.toLowerCase()) {
-            case "cartelera" -> mostrarCartelera();
-            case "reservas" -> mostrarReservas();
-            case "peliculas", "películas" -> mostrarPeliculas();
-            case "salas" -> mostrarSalas();
-            case "funciones" -> mostrarFunciones();
-            case "inicio" -> mostrarInicio();
-            default -> mostrarInicio();
+            case "cartelera" ->
+                mostrarCartelera();
+            case "reservas" ->
+                mostrarReservas();
+            case "peliculas", "películas" ->
+                mostrarPeliculas();
+            case "salas" ->
+                mostrarSalas();
+            case "funciones" ->
+                mostrarFunciones();
+            case "inicio" ->
+                mostrarInicio();
+            default ->
+                mostrarInicio();
         }
     }
 
@@ -165,13 +209,14 @@ public class ControladorPrincipal {
         try {
             var recurso = getClass().getResource(ruta);
             if (recurso == null) {
-                throw new IOException("No se encontró el recurso FXML: " + ruta);
+                System.err.println("No se encontró el FXML: " + ruta);
+                return;
             }
 
             FXMLLoader loader = new FXMLLoader(recurso);
             Node vista = loader.load();
-
             Object controller = loader.getController();
+
             if (controller instanceof ControladorInicio ctrlInicio) {
                 ctrlInicio.setControladorPrincipal(this);
                 ctrlInicio.actualizarResumen(
@@ -186,10 +231,10 @@ public class ControladorPrincipal {
                 ctrlCartelera.setDatosCartelera(funciones, peliculas);
             } else if (controller instanceof ControladorSalas ctrlSalas) {
                 ctrlSalas.setControladorPrincipal(this);
-                ctrlSalas.setSalas(salas);
+                ctrlSalas.setDatosSalas(salas);
             } else if (controller instanceof ControladorPeliculas ctrlPeliculas) {
                 ctrlPeliculas.setControladorPrincipal(this);
-                ctrlPeliculas.setPeliculas(peliculas);
+                ctrlPeliculas.setDatosPeliculas(peliculas);
             } else if (controller instanceof ControladorFunciones ctrlFunciones) {
                 ctrlFunciones.setControladorPrincipal(this);
                 ctrlFunciones.setDatosFunciones(funciones, peliculas, salas);
@@ -198,13 +243,15 @@ public class ControladorPrincipal {
                 ctrlReservas.setDatosReservas(reservas, funciones);
             }
 
-            panelPrincipal.setCenter(vista);
+            if (panelPrincipal != null) {
+                panelPrincipal.setCenter(vista);
+            }
             if (lblTitulo != null) {
                 lblTitulo.setText(titulo);
             }
-        } catch (IOException e) {
+        } catch (IOException ex) {
             System.err.println("Error al cargar la vista: " + ruta);
-            e.printStackTrace();
+            ex.printStackTrace();
         }
     }
 }

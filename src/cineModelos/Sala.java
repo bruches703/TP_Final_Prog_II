@@ -4,6 +4,7 @@
  */
 package cineModelos;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Scanner;
 
@@ -11,8 +12,9 @@ import java.util.Scanner;
  *
  * @author Bruches
  */
-public class Sala {
+public class Sala implements Serializable {
 
+    private static final long serialVersionUID = 1002L;
     private int idSala;
     private List<Butaca> listaButacas;
     private int butacasTotales;
@@ -116,7 +118,11 @@ public class Sala {
         }
         System.out.println();
     }
-
+/**
+ * Cuenta la cantidad de filas totales de la sala
+ * @param sala Sala a la cual se le contara las filas
+ * @return  devuelve la cantidad de filas en numero entero
+ */
     public int filasTotales(Sala sala) {
         if (sala == null || sala.getListaButacas() == null) {
             return -1;
@@ -131,7 +137,12 @@ public class Sala {
 
         return filasTotales;
     }
-
+/**
+ * Cuenta la cantidad de asientos totales por fila de la
+ * sala
+ * @param sala Sala a la que se le contaran los asientos por fila
+ * @return Devuelve la cantidad de asientos por fila de la sala
+ */
     public int asientosTotales(Sala sala) {
         if (sala == null || sala.getListaButacas() == null) {
             return -1;
@@ -148,11 +159,13 @@ public class Sala {
     }
 
     /**
-     *
-     * @param listaSalas
-     * @param idBuscada
+     * Busca la sala por Id 
+     * @param listaSalas Tipo lista de Sala. Lista de salas a buscar la ID
+     * @param idBuscada Tipo entero. Id buscado en la lista
      * @return
-     */
+     *      Si lo encuentra, devuelve la sala.
+     *      Si no lo encuentra, devuelve null.
+     */     
     public static Sala buscarSalaPorId(List<Sala> listaSalas, int idBuscada) {
         if (listaSalas == null) {
             return null;
@@ -165,6 +178,11 @@ public class Sala {
         return null;
     }
 
+    /**
+     * 
+     * @param listaDeButaca
+     * @param butacasReservadas 
+     */
     public void reservarButacaDeSala(List<Butaca> listaDeButaca, List<Butaca> butacasReservadas) {
         if (listaDeButaca == null || butacasReservadas == null) {
             System.out.println("No hay butacas que reservar");

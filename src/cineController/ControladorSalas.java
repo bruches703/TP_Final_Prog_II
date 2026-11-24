@@ -8,7 +8,6 @@ import cineModelos.Butaca;
 import cineModelos.Sala;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,16 +29,13 @@ public class ControladorSalas {
     private TableView<Sala> tblSalas;
 
     @FXML
-    private TableColumn<Sala, Integer> colIdSala;
+    private TableColumn<Sala, String> colIdSala;
 
     @FXML
-    private TableColumn<Sala, Integer> colButacas;
+    private TableColumn<Sala, String> colCapacidad;
 
     @FXML
     private TableColumn<Sala, String> colDisponible;
-
-    @FXML
-    private Button btnVolver;
 
     @FXML
     private TextField txtIdSala;
@@ -60,6 +56,9 @@ public class ControladorSalas {
     private Button btnModificarSala;
 
     @FXML
+    private Button btnVolver;
+
+    @FXML
     private Label lblMensaje;
 
     private ControladorPrincipal controladorPrincipal;
@@ -70,188 +69,172 @@ public class ControladorSalas {
         this.controladorPrincipal = controladorPrincipal;
     }
 
-    public void setSalas(List<Sala> salas) {
-        if (salas != null) {
-            this.listaSalasReferencia = salas;
-        }
+    public void setDatosSalas(List<Sala> salas) {
+        this.listaSalasReferencia = (salas != null) ? salas : new ArrayList<>();
         salasObservables.setAll(this.listaSalasReferencia);
+        if (tblSalas != null) {
+            tblSalas.setItems(salasObservables);
+        }
     }
 
     @FXML
     public void initialize() {
-        tblSalas.setItems(salasObservables);
+        if (tblSalas != null) {
+            tblSalas.setItems(salasObservables);
+            configurarColumnas();
+            tblSalas.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+                if (newSel != null) {
+                    if (txtIdSala != null) {
+                        txtIdSala.setText(String.valueOf(newSel.getIdSala()));
+                    }
+                    if (chkDisponible != null) {
+                        chkDisponible.setSelected(newSel.isEstaDisponible());
+                    }
+                }
+            });
+        }
         if (chkDisponible != null) {
             chkDisponible.setSelected(true);
         }
-        configurarColumnas();
+    }
 
-        tblSalas.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-            if (newSel != null) {
-                txtIdSala.setText(String.valueOf(newSel.getIdSala()));
-                int maxFila = 0;
-                int maxAsiento = 0;
-                if (newSel.getListaButacas() != null) {
-                    for (Butaca b : newSel.getListaButacas()) {
-                        if (b != null) {
-                            maxFila = Math.max(maxFila, b.getFila());
-                            maxAsiento = Math.max(maxAsiento, b.getAsiento());
-                        }
-                    }
-                }
-                txtFilas.setText(String.valueOf(maxFila));
-                txtAsientosPorFila.setText(String.valueOf(maxAsiento));
-                if (chkDisponible != null) {
-                    chkDisponible.setSelected(newSel.isEstaDisponible());
-                }
-            }
-        });
+    private List<Butaca> generarButacas(int filas, int asientosPorFila) {
+        return Butaca.nuevaListaButacas(filas, asientosPorFila);
+    }
+
+    private int contarButacas(Sala sala) {
+        if (sala == null) {
+            return 0;
+        }
+        if (sala.getListaButacas() != null) {
+            return sala.getListaButacas().size();
+        }
+        return sala.getButacasTotales();
     }
 
     private void configurarColumnas() {
-        colIdSala.setCellValueFactory(cell -> {
-            Sala s = cell.getValue();
-            return new SimpleObjectProperty<>(s != null ? s.getIdSala() : 0);
-        });
-
-        colButacas.setCellValueFactory(cell -> {
-            Sala s = cell.getValue();
-            int total = (s != null && s.getListaButacas() != null) ? s.getListaButacas().size() : 0;
-            return new SimpleObjectProperty<>(total);
-        });
-
-        colDisponible.setCellValueFactory(cell -> {
-            Sala s = cell.getValue();
-            boolean disp = s != null && s.isEstaDisponible();
-            return new SimpleStringProperty(disp ? "Disponible" : "No disponible");
-        });
+        if (colIdSala != null) {
+            colIdSala.setCellValueFactory(cell -> {
+                Sala s = cell.getValue();
+                return new SimpleStringProperty(s != null ? "Sala " + s.getIdSala() : "");
+            });
+        }
+        if (colCapacidad != null) {
+            colCapacidad.setCellValueFactory(cell -> {
+                Sala s = cell.getValue();
+                int total = contarButacas(s);
+                return new SimpleStringProperty(total + " butacas");
+            });
+        }
+        if (colDisponible != null) {
+            colDisponible.setCellValueFactory(cell -> {
+                Sala s = cell.getValue();
+                boolean disp = s != null && s.isEstaDisponible();
+                return new SimpleStringProperty(disp ? "Disponible" : "No disponible");
+            });
+        }
     }
 
     @FXML
     private void agregarSala() {
-        String idTexto = (txtIdSala != null && txtIdSala.getText() != null)
-                ? txtIdSala.getText().trim()
-                : "";
-        String filasTexto = (txtFilas != null && txtFilas.getText() != null)
-                ? txtFilas.getText().trim()
-                : "";
-        String asientosTexto = (txtAsientosPorFila != null && txtAsientosPorFila.getText() != null)
-                ? txtAsientosPorFila.getText().trim()
-                : "";
-        boolean disponible = (chkDisponible == null) || chkDisponible.isSelected();
-
-        int idSala;
-        int filas;
-        int asientosPorFila;
-        try {
-            idSala = Integer.parseInt(idTexto);
-            filas = Integer.parseInt(filasTexto);
-            asientosPorFila = Integer.parseInt(asientosTexto);
-        } catch (NumberFormatException e) {
-            lblMensaje.setText("ID, filas y asientos por fila deben ser números enteros.");
-            return;
-        }
-
-        if (idSala <= 0 || filas <= 0 || asientosPorFila <= 0) {
-            lblMensaje.setText("Todos los valores numéricos deben ser mayores a 0.");
-            return;
-        }
-
-        if (Sala.buscarSalaPorId(listaSalasReferencia, idSala) != null) {
-            lblMensaje.setText("Ya existe una sala con el ID " + idSala + ".");
-            return;
-        }
-
-        List<Butaca> butacas = generarButacas(filas, asientosPorFila);
-        Sala nuevaSala = new Sala(idSala, butacas, disponible);
-
-        listaSalasReferencia.add(nuevaSala);
-        salasObservables.setAll(listaSalasReferencia);
-
-        if (controladorPrincipal != null && controladorPrincipal.getAlmacenSalas() != null) {
-            controladorPrincipal.getAlmacenSalas().almacenarSala(nuevaSala, ";");
-        }
-
-        limpiarFormulario();
-        lblMensaje.setText("Sala " + idSala + " (" + butacas.size() + " butacas) agregada y guardada en salas.csv.");
-    }
-
-    @FXML
-    private void modificarSala() {
-        Sala seleccionada = tblSalas.getSelectionModel().getSelectedItem();
-        if (seleccionada == null) {
-            lblMensaje.setText("Seleccioná una sala de la tabla para modificar.");
-            return;
-        }
-
-        String idTexto = (txtIdSala != null && txtIdSala.getText() != null)
-                ? txtIdSala.getText().trim()
-                : "";
-        String filasTexto = (txtFilas != null && txtFilas.getText() != null)
-                ? txtFilas.getText().trim()
-                : "";
-        String asientosTexto = (txtAsientosPorFila != null && txtAsientosPorFila.getText() != null)
-                ? txtAsientosPorFila.getText().trim()
-                : "";
-        boolean disponible = (chkDisponible == null) || chkDisponible.isSelected();
-
-        int idSala;
-        int filas;
-        int asientosPorFila;
-        try {
-            idSala = Integer.parseInt(idTexto);
-            filas = Integer.parseInt(filasTexto);
-            asientosPorFila = Integer.parseInt(asientosTexto);
-        } catch (NumberFormatException e) {
-            lblMensaje.setText("ID, filas y asientos por fila deben ser números enteros.");
-            return;
-        }
-
-        if (idSala <= 0 || filas <= 0 || asientosPorFila <= 0) {
-            lblMensaje.setText("Todos los valores numéricos deben ser mayores a 0.");
+        DatosNuevaSala datos = validarNuevaSala();
+        if (datos == null) {
             return;
         }
 
         for (Sala s : listaSalasReferencia) {
-            if (s != null && s != seleccionada && s.getIdSala() == idSala) {
-                lblMensaje.setText("Ya existe otra sala con el ID " + idSala + ".");
+            if (s != null && s.getIdSala() == datos.idSala) {
+                mostrarMensaje("Ya existe una sala con el número " + datos.idSala + ".");
                 return;
             }
         }
 
-        List<Butaca> butacas = generarButacas(filas, asientosPorFila);
-        Sala actualizada = new Sala(idSala, butacas, disponible);
+        List<Butaca> butacas = generarButacas(datos.filas, datos.asientosPorFila);
+        Sala nuevaSala = new Sala(datos.idSala, butacas, datos.disponible);
 
-        int idx = listaSalasReferencia.indexOf(seleccionada);
-        if (idx >= 0) {
-            listaSalasReferencia.set(idx, actualizada);
-        }
-
+        listaSalasReferencia.add(nuevaSala);
         salasObservables.setAll(listaSalasReferencia);
-        tblSalas.getSelectionModel().select(actualizada);
 
-        if (controladorPrincipal != null && controladorPrincipal.getAlmacenSalas() != null) {
-            controladorPrincipal.getAlmacenSalas().sobrescribirSalas(listaSalasReferencia);
+        if (controladorPrincipal != null && !controladorPrincipal.persistirEstadoActual(lblMensaje)) {
+            return;
         }
 
-        lblMensaje.setText("Sala " + idSala + " modificada y guardada en salas.csv.");
+        limpiarFormulario();
+        mostrarMensaje("Sala " + nuevaSala.getIdSala() + " (" + butacas.size()
+                + " butacas) guardada en el estado del cine.");
     }
 
-    private List<Butaca> generarButacas(int filas, int asientosPorFila) {
-        List<Butaca> butacas = new ArrayList<>();
-        for (int f = 1; f <= filas; f++) {
-            for (int a = 1; a <= asientosPorFila; a++) {
-                butacas.add(new Butaca(f, a));
-            }
+    @FXML
+    private void modificarSala() {
+        if (tblSalas == null) {
+            return;
         }
-        return butacas;
+        Sala seleccionada = tblSalas.getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            mostrarMensaje("Seleccioná una sala de la tabla para modificar.");
+            return;
+        }
+
+        boolean disponible = (chkDisponible == null) || chkDisponible.isSelected();
+        seleccionada.setEstaDisponible(disponible);
+
+        salasObservables.setAll(listaSalasReferencia);
+        tblSalas.refresh();
+
+        if (controladorPrincipal != null && !controladorPrincipal.persistirEstadoActual(lblMensaje)) {
+            return;
+        }
+
+        mostrarMensaje("Sala " + seleccionada.getIdSala() + " actualizada en el estado del cine.");
+    }
+
+    private DatosNuevaSala validarNuevaSala() {
+        String idTexto = (txtIdSala != null && txtIdSala.getText() != null) ? txtIdSala.getText().trim() : "";
+        String filasTexto = (txtFilas != null && txtFilas.getText() != null) ? txtFilas.getText().trim() : "";
+        String asientosTexto = (txtAsientosPorFila != null && txtAsientosPorFila.getText() != null)
+                ? txtAsientosPorFila.getText().trim()
+                : "";
+        boolean disponible = (chkDisponible == null) || chkDisponible.isSelected();
+
+        int idSala;
+        int filas;
+        int asientosPorFila;
+
+        try {
+            idSala = Integer.parseInt(idTexto);
+            filas = Integer.parseInt(filasTexto);
+            asientosPorFila = Integer.parseInt(asientosTexto);
+        } catch (NumberFormatException ex) {
+            mostrarMensaje("Ingresá números enteros válidos para ID de sala, filas y asientos.");
+            return null;
+        }
+
+        if (idSala <= 0 || filas <= 0 || asientosPorFila <= 0) {
+            mostrarMensaje("ID de sala, filas y asientos por fila deben ser mayores a 0.");
+            return null;
+        }
+
+        return new DatosNuevaSala(idSala, filas, asientosPorFila, disponible);
     }
 
     private void limpiarFormulario() {
-        txtIdSala.clear();
-        txtFilas.clear();
-        txtAsientosPorFila.clear();
+        if (txtIdSala != null) {
+            txtIdSala.clear();
+        }
+        if (txtFilas != null) {
+            txtFilas.clear();
+        }
+        if (txtAsientosPorFila != null) {
+            txtAsientosPorFila.clear();
+        }
         if (chkDisponible != null) {
             chkDisponible.setSelected(true);
+        }
+    }
+
+    private void mostrarMensaje(String texto) {
+        if (lblMensaje != null) {
+            lblMensaje.setText(texto);
         }
     }
 
@@ -262,4 +245,6 @@ public class ControladorSalas {
         }
     }
 
+    private record DatosNuevaSala(int idSala, int filas, int asientosPorFila, boolean disponible) {
+    }
 }

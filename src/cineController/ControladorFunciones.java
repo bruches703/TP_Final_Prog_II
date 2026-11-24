@@ -4,6 +4,7 @@
  */
 package cineController;
 
+import cineController.ControladorPrincipal;
 import cineModelos.Funcion;
 import cineModelos.Pelicula;
 import cineModelos.Sala;
@@ -25,11 +26,15 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
+import utilidadesHerramientas.ServicioFunciones;
+
 /**
  *
- * @author Bruches
+ * - @author Bruches
  */
 public class ControladorFunciones {
+
+    private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("H:mm");
 
     @FXML
     private TableView<Funcion> tblFunciones;
@@ -72,6 +77,9 @@ public class ControladorFunciones {
 
     @FXML
     private Button btnModificarFuncion;
+
+    @FXML
+    private Button btnEliminarFuncion;
 
     @FXML
     private Label lblMensaje;
@@ -209,78 +217,46 @@ public class ControladorFunciones {
 
     @FXML
     private void agregarFuncion() {
-        Pelicula pelicula = (cmbPelicula != null) ? cmbPelicula.getValue() : null;
-        Sala sala = (cmbSala != null) ? cmbSala.getValue() : null;
-        LocalDate fecha = (dpFecha != null) ? dpFecha.getValue() : null;
-        String horarioTexto = (txtHorario != null && txtHorario.getText() != null)
-                ? txtHorario.getText().trim()
-                : "";
-        String precioTexto = (txtPrecio != null && txtPrecio.getText() != null)
-                ? txtPrecio.getText().trim().replace(",", ".")
-                : "";
-
-        if (pelicula == null) {
-            lblMensaje.setText("Seleccioná una película.");
-            return;
-        }
-        if (sala == null) {
-            lblMensaje.setText("Seleccioná una sala.");
-            return;
-        }
-        if (!sala.isEstaDisponible()) {
-            lblMensaje.setText("La Sala " + sala.getIdSala() + " no está disponible.");
-            return;
-        }
-        if (fecha == null) {
-            lblMensaje.setText("Seleccioná una fecha.");
+        DatosFormularioFuncion datos = validarYLeerFormulario();
+        if (datos == null) {
             return;
         }
 
-        LocalTime horario;
-        try {
-            horario = LocalTime.parse(horarioTexto, DateTimeFormatter.ofPattern("H:mm"));
-        } catch (DateTimeParseException e) {
-            lblMensaje.setText("Ingresá un horario válido (ej: 20:30).");
+        int duracionMinutos = ServicioFunciones.obtenerDuracionMinutos(datos.pelicula);
+        Funcion conflicto = ServicioFunciones.buscarFuncionSuperpuesta(
+                listaFuncionesReferencia,
+                datos.sala,
+                datos.fecha,
+                datos.horario,
+                duracionMinutos,
+                null
+        );
+
+        if (conflicto != null) {
+            lblMensaje.setText(formatearMensajeConflicto(conflicto, datos.sala));
             return;
         }
 
-        double precio;
-        try {
-            precio = Double.parseDouble(precioTexto);
-        } catch (NumberFormatException e) {
-            lblMensaje.setText("Ingresá un precio numérico válido.");
-            return;
-        }
-
-        if (precio <= 0) {
-            lblMensaje.setText("El precio debe ser mayor a 0.");
-            return;
-        }
-
-        for (Funcion f : listaFuncionesReferencia) {
-            if (f != null && f.getSala() != null
-                    && f.getSala().getIdSala() == sala.getIdSala()
-                    && fecha.equals(f.getFecha())
-                    && horario.equals(f.getHorario())) {
-                lblMensaje.setText("Ya existe una función en Sala " + sala.getIdSala()
-                        + " para esa fecha y horario.");
-                return;
-            }
-        }
-
-        int nuevoId = listaFuncionesReferencia.size() + 1;
-        Funcion nuevaFuncion = new Funcion(nuevoId, fecha, horario, sala, pelicula, precio);
+        int nuevoId = generarSiguienteIdFuncion();
+        Funcion nuevaFuncion = new Funcion(
+                nuevoId,
+                datos.fecha,
+                datos.horario,
+                datos.sala,
+                datos.pelicula,
+                datos.precio
+        );
 
         listaFuncionesReferencia.add(nuevaFuncion);
         funcionesObservables.setAll(listaFuncionesReferencia);
 
-        if (controladorPrincipal != null && controladorPrincipal.getAlmacenFunciones() != null) {
-            controladorPrincipal.getAlmacenFunciones().almacenarFuncion(nuevaFuncion);
+        if (controladorPrincipal != null && !controladorPrincipal.persistirEstadoActual(lblMensaje)) {
+            return;
         }
 
         txtHorario.clear();
         txtPrecio.clear();
-        lblMensaje.setText("Función agregada y guardada en funciones.csv.");
+        lblMensaje.setText("Función agregada y guardada en el estado del cine.");
     }
 
     @FXML
@@ -291,6 +267,78 @@ public class ControladorFunciones {
             return;
         }
 
+        DatosFormularioFuncion datos = validarYLeerFormulario();
+        if (datos == null) {
+            return;
+        }
+
+        int duracionMinutos = ServicioFunciones.obtenerDuracionMinutos(datos.pelicula);
+        Funcion conflicto = ServicioFunciones.buscarFuncionSuperpuesta(
+                listaFuncionesReferencia,
+                datos.sala,
+                datos.fecha,
+                datos.horario,
+                duracionMinutos,
+                seleccionada
+        );
+
+        if (conflicto != null) {
+            lblMensaje.setText(formatearMensajeConflicto(conflicto, datos.sala));
+            return;
+        }
+
+        int idConservado = seleccionada.getIdFuncion();
+        Funcion actualizada = new Funcion(
+                idConservado,
+                datos.fecha,
+                datos.horario,
+                datos.sala,
+                datos.pelicula,
+                datos.precio
+        );
+
+        int idx = listaFuncionesReferencia.indexOf(seleccionada);
+        if (idx >= 0) {
+            listaFuncionesReferencia.set(idx, actualizada);
+        }
+
+        funcionesObservables.setAll(listaFuncionesReferencia);
+        tblFunciones.getSelectionModel().select(actualizada);
+
+        if (controladorPrincipal != null && !controladorPrincipal.persistirEstadoActual(lblMensaje)) {
+            return;
+        }
+
+        lblMensaje.setText("Función modificada y guardada en el estado del cine.");
+    }
+
+    @FXML
+    private void eliminarFuncion() {
+        Funcion seleccionada = tblFunciones.getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            lblMensaje.setText("Seleccioná una función de la tabla para eliminar.");
+            return;
+        }
+
+        boolean eliminada = listaFuncionesReferencia.remove(seleccionada);
+        if (!eliminada) {
+            lblMensaje.setText("No se pudo eliminar la función seleccionada.");
+            return;
+        }
+
+        funcionesObservables.setAll(listaFuncionesReferencia);
+        tblFunciones.getSelectionModel().clearSelection();
+
+        if (controladorPrincipal != null && !controladorPrincipal.persistirEstadoActual(lblMensaje)) {
+            return;
+        }
+
+        txtHorario.clear();
+        txtPrecio.clear();
+        lblMensaje.setText("Función eliminada y guardada en el estado del cine.");
+    }
+
+    private DatosFormularioFuncion validarYLeerFormulario() {
         Pelicula pelicula = (cmbPelicula != null) ? cmbPelicula.getValue() : null;
         Sala sala = (cmbSala != null) ? cmbSala.getValue() : null;
         LocalDate fecha = (dpFecha != null) ? dpFecha.getValue() : null;
@@ -303,27 +351,27 @@ public class ControladorFunciones {
 
         if (pelicula == null) {
             lblMensaje.setText("Seleccioná una película.");
-            return;
+            return null;
         }
         if (sala == null) {
             lblMensaje.setText("Seleccioná una sala.");
-            return;
+            return null;
         }
         if (!sala.isEstaDisponible()) {
             lblMensaje.setText("La Sala " + sala.getIdSala() + " no está disponible.");
-            return;
+            return null;
         }
         if (fecha == null) {
             lblMensaje.setText("Seleccioná una fecha.");
-            return;
+            return null;
         }
 
         LocalTime horario;
         try {
-            horario = LocalTime.parse(horarioTexto, DateTimeFormatter.ofPattern("H:mm"));
+            horario = LocalTime.parse(horarioTexto, FORMATO_HORA);
         } catch (DateTimeParseException e) {
             lblMensaje.setText("Ingresá un horario válido (ej: 20:30).");
-            return;
+            return null;
         }
 
         double precio;
@@ -331,41 +379,36 @@ public class ControladorFunciones {
             precio = Double.parseDouble(precioTexto);
         } catch (NumberFormatException e) {
             lblMensaje.setText("Ingresá un precio numérico válido.");
-            return;
+            return null;
         }
 
         if (precio <= 0) {
             lblMensaje.setText("El precio debe ser mayor a 0.");
-            return;
+            return null;
         }
 
+        return new DatosFormularioFuncion(pelicula, sala, fecha, horario, precio);
+    }
+
+    private int generarSiguienteIdFuncion() {
+        int maxId = 0;
         for (Funcion f : listaFuncionesReferencia) {
-            if (f != null && f != seleccionada && f.getSala() != null
-                    && f.getSala().getIdSala() == sala.getIdSala()
-                    && fecha.equals(f.getFecha())
-                    && horario.equals(f.getHorario())) {
-                lblMensaje.setText("Ya existe otra función en Sala " + sala.getIdSala()
-                        + " para esa fecha y horario.");
-                return;
+            if (f != null && f.getIdFuncion() > maxId) {
+                maxId = f.getIdFuncion();
             }
         }
+        return maxId + 1;
+    }
 
-        int idConservado = seleccionada.getIdFuncion();
-        Funcion actualizada = new Funcion(idConservado, fecha, horario, sala, pelicula, precio);
-
-        int idx = listaFuncionesReferencia.indexOf(seleccionada);
-        if (idx >= 0) {
-            listaFuncionesReferencia.set(idx, actualizada);
-        }
-
-        funcionesObservables.setAll(listaFuncionesReferencia);
-        tblFunciones.getSelectionModel().select(actualizada);
-
-        if (controladorPrincipal != null && controladorPrincipal.getAlmacenFunciones() != null) {
-            controladorPrincipal.getAlmacenFunciones().sobrescribirFunciones(listaFuncionesReferencia);
-        }
-
-        lblMensaje.setText("Función modificada y guardada en funciones.csv.");
+    private String formatearMensajeConflicto(Funcion conflicto, Sala sala) {
+        String titulo = (conflicto.getPelicula() != null && conflicto.getPelicula().getTitulo() != null)
+                ? conflicto.getPelicula().getTitulo()
+                : "otra función";
+        String hora = (conflicto.getHorario() != null)
+                ? conflicto.getHorario().toString()
+                : "";
+        return "Superposición horaria en Sala " + sala.getIdSala()
+                + " con \"" + titulo + "\" (" + hora + ").";
     }
 
     @FXML
@@ -373,5 +416,15 @@ public class ControladorFunciones {
         if (controladorPrincipal != null) {
             controladorPrincipal.navegarA("inicio");
         }
+    }
+
+    private record DatosFormularioFuncion(
+            Pelicula pelicula,
+            Sala sala,
+            LocalDate fecha,
+            LocalTime horario,
+            double precio
+            ) {
+
     }
 }

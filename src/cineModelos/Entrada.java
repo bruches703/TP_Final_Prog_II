@@ -25,6 +25,7 @@ public abstract class Entrada {
         this.precio = this.tipoEntrada.calcularPrecioUnitario(precioBase);
     }
 
+    // Getters y Setters ---------- Inicio
     public double getPrecio() {
         return precio;
     }
@@ -49,6 +50,7 @@ public abstract class Entrada {
         this.tipoEntrada = tipoEntrada;
     }
 
+    // Getters y Setters ---------- Fin
     @Override
     public String toString() {
         String butacaStr = butaca != null
@@ -56,5 +58,5 @@ public abstract class Entrada {
                 : "Sin butaca";
         String tipoStr = tipoEntrada != null ? tipoEntrada.getEtiqueta() : "General";
         return "Entrada{" + butacaStr + ", tipo=" + tipoStr + ", precio=" + precio + "}";
-    }  
+    }
 }

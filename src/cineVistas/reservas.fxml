@@ -11,10 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="16.0" styleClass="content-area"
-      xmlns="http://javafx.com/javafx/27.0.1"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="cineController.ControladorReservas">
+<VBox spacing="16.0" styleClass="content-area" xmlns="http://javafx.com/javafx/27.0.1.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cineController.ControladorReservas">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="12.0">
             <children>
@@ -37,24 +34,20 @@
                             </children>
                         </HBox>
 
-                        <Label fx:id="lblPantalla" maxWidth="1.7976931348623157E308"
-                               styleClass="screen-banner" text="PANTALLA" />
+                        <Label fx:id="lblPantalla" alignment="TOP_CENTER" maxWidth="1.7976931348623157E308" styleClass="screen-banner" text="PANTALLA" textAlignment="CENTER" />
 
-                        <ScrollPane fitToWidth="true" fitToHeight="true" prefHeight="240.0" styleClass="transparent-scroll">
+                        <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="240.0" styleClass="transparent-scroll">
                             <content>
                                 <GridPane fx:id="gridButacas" alignment="CENTER" hgap="10.0" vgap="10.0" />
                             </content>
                         </ScrollPane>
 
-                        <Label styleClass="hint-text"
-                               text="Blanca: disponible  |  Oscura: seleccionada  |  Tachada: ocupada" />
+                        <Label styleClass="hint-text" text="Blanca: disponible  |  Oscura: seleccionada  |  Tachada: ocupada" />
 
                         <HBox alignment="CENTER_LEFT" spacing="12.0">
                             <children>
-                                <Button fx:id="btnVolver" onAction="#volver"
-                                        styleClass="btn-secondary" text="← Volver" />
-                                <Button fx:id="btnLimpiarSeleccion" onAction="#limpiarSeleccion"
-                                        styleClass="btn-secondary" text="Limpiar selección" />
+                                <Button fx:id="btnVolver" onAction="#volver" styleClass="btn-secondary" text="← Volver" />
+                                <Button fx:id="btnLimpiarSeleccion" onAction="#limpiarSeleccion" styleClass="btn-secondary" text="Limpiar selección" />
                             </children>
                         </HBox>
                     </children>
@@ -77,9 +70,7 @@
                                     </children>
                                 </VBox>
 
-                                <Button fx:id="btnConfirmarReserva" maxWidth="1.7976931348623157E308"
-                                        onAction="#confirmarReserva" styleClass="btn-primary"
-                                        text="Confirmar reserva →" />
+                                <Button fx:id="btnConfirmarReserva" maxWidth="1.7976931348623157E308" onAction="#confirmarReserva" styleClass="btn-primary" text="Confirmar reserva →" />
 
                                 <Label fx:id="lblMensajeReserva" styleClass="hint-text" text="" wrapText="true" />
                             </children>
@@ -99,10 +90,8 @@
 
                                 <HBox alignment="CENTER_LEFT" spacing="8.0">
                                     <children>
-                                        <TextField fx:id="txtCodigoCancelar" HBox.hgrow="ALWAYS"
-                                                   promptText="Código / ID de reserva" />
-                                        <Button fx:id="btnCancelarReserva" onAction="#cancelarReserva"
-                                                styleClass="btn-secondary" text="Cancelar reserva" />
+                                        <TextField fx:id="txtCodigoCancelar" promptText="Código / ID de reserva" HBox.hgrow="ALWAYS" />
+                                        <Button fx:id="btnCancelarReserva" onAction="#cancelarReserva" styleClass="btn-secondary" text="Cancelar reserva" />
                                     </children>
                                 </HBox>
                             </children>

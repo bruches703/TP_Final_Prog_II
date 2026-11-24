@@ -22,6 +22,10 @@ public class Pelicula implements Serializable {
     private Duration duracion;
     private boolean estaActiva;
 
+    public Pelicula() {
+    }
+
+    
     public Pelicula(String titulo, Duration duracion, boolean estaActiva) {
         this.titulo = titulo;
         this.duracion = duracion;
@@ -86,10 +90,14 @@ public class Pelicula implements Serializable {
     }
 
     /**
+     *  Busca un pelicula por el titulo en una lista de peliculas
+     * 
+     * @param listaPelicula lista de peliculas a donde se buscara por titulo.
+     * @param tituloBuscado tipo String, representa el titulo de la pelicula buscada
      *
-     * @param listaPelicula
-     * @param tituloBuscado
-     * @return
+     * @return 
+     *      De encontrar la pelicula, devuelve un objeto de tipo Pelicula.
+     *      De no encontrarla o de haber un error devuelve null.
      */
     public static Pelicula buscarPeliculaPorTitulo(List<Pelicula> listaPelicula, String tituloBuscado) {
         if (listaPelicula == null || tituloBuscado == null) {
@@ -127,10 +135,13 @@ public class Pelicula implements Serializable {
     }
 
     /**
+     * Muestra la lista de peliculas y pide que ingrese un titulo para buscarlo.
      * 
-     * @param leer
-     * @param listaPeliculas
+     * @param leer tipo Scanner, herramienta para leer lo ingresado.
+     * @param listaPeliculas tipo lista de Pelicula donde se buscara el titulo
      * @return 
+     *      Devuelve un objeto de tipo pelicula si lo encuentra por titulo.
+     *      De no encontrarlo o haber algun error, devuelve null.
      */
     public static Pelicula seleccionarPelicula(Scanner leer, List<Pelicula> listaPeliculas) {
         if (listaPeliculas == null || listaPeliculas.isEmpty()) {

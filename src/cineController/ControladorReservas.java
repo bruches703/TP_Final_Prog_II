@@ -407,8 +407,8 @@ public class ControladorReservas {
         listaReservasReferencia.add(nuevaReserva);
         reservasObservables.setAll(listaReservasReferencia);
 
-        if (controladorPrincipal != null && controladorPrincipal.getAlmacenReservas() != null) {
-            controladorPrincipal.getAlmacenReservas().almacenarReserva(nuevaReserva, sala, reservadasAhora);
+        if (controladorPrincipal != null && !controladorPrincipal.persistirEstadoActual(lblMensajeReserva)) {
+            return;
         }
 
         seleccionConTarifa.clear();
@@ -417,7 +417,7 @@ public class ControladorReservas {
         actualizarResumen();
 
         lblMensajeReserva.setText(String.format(
-                "Reserva %s confirmada (%d butacas — $ %.2f) y guardada en CSV.",
+                "Reserva %s confirmada (%d butacas — $ %.2f) y guardada en el estado del cine.",
                 codigoFinal, cantidad, importeTotal
         ));
 
@@ -490,10 +490,6 @@ public class ControladorReservas {
         listaReservasReferencia.remove(encontrada);
         reservasObservables.setAll(listaReservasReferencia);
 
-        if (controladorPrincipal != null && controladorPrincipal.getAlmacenReservas() != null) {
-            controladorPrincipal.getAlmacenReservas().reescribirReservas(listaReservasReferencia);
-        }
-
         List<Butaca> butacasLiberadas = butacasPorCodigoReserva.remove(codigoBuscado.toUpperCase());
         if (butacasLiberadas != null) {
             for (Butaca b : butacasLiberadas) {
@@ -503,11 +499,15 @@ public class ControladorReservas {
             }
         }
 
+        if (controladorPrincipal != null && !controladorPrincipal.persistirEstadoActual(lblMensajeReserva)) {
+            return;
+        }
+
         if (txtCodigoCancelar != null) {
             txtCodigoCancelar.clear();
         }
         construirGrillaButacas();
         actualizarResumen();
-        lblMensajeReserva.setText("Reserva \"" + encontrada.getCodigo() + "\" cancelada y actualizada en CSV.");
+        lblMensajeReserva.setText("Reserva \"" + encontrada.getCodigo() + "\" cancelada y guardada en el estado del cine.");
     }
 }

@@ -86,6 +86,14 @@ public class Funcion implements Serializable {
     public void setPelicula(Pelicula pelicula) {
         this.pelicula = pelicula;
     }
+
+    public String getHorarioFuncion() {
+        return (horario != null) ? horario.toString() : "";
+    }
+
+    public String getFechaFuncion() {
+        return (fecha != null) ? fecha.toString() : "";
+    }
     // Getters y Setters ------------- Fin
 
     public LocalDateTime getFinalizacionPelicula() {
@@ -99,6 +107,12 @@ public class Funcion implements Serializable {
                 + ", sala=" + sala + ", pelicula=" + pelicula + ", precio=" + precio + '}';
     }
 
+    /**
+     * Registra la fecha ingresada y lo valida en formato dd - mm - aaaa
+     *
+     * @param leer Tipo Scanner para almacenar lo ingresado
+     * @return Devuelve la fecha de la funcion ingresada de tipo LocalDate
+     */
     public static LocalDate ingresarFecha(Scanner leer) {
         DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate fechaFuncion = null;
@@ -114,6 +128,12 @@ public class Funcion implements Serializable {
         return fechaFuncion;
     }
 
+    /**
+     * Registra el horario ingresado y lo valida en formato hh : mm
+     *
+     * @param leer Tipo Scanner para almacenar lo ingresado
+     * @return devuelve la hora ingresada validada en formato LocalTime
+     */
     public static LocalTime ingresarHorario(Scanner leer) {
         DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime horarioFuncion = null;
@@ -129,6 +149,14 @@ public class Funcion implements Serializable {
         return horarioFuncion;
     }
 
+    /**
+     * Muestra la lista de salas y pide que ingreses un id, la busca en la lista
+     * que llega por parámetro y devuelve la sala buscada.
+     *
+     * @param leer Tipo scanner, herramienta de lectura de ingreso.
+     * @param listaSalas arraylist de salas a buscar
+     * @return devuelve una sala buscada por id.
+     */
     public static Sala seleccionarSala(Scanner leer, List<Sala> listaSalas) {
         if (listaSalas == null || listaSalas.isEmpty()) {
             System.out.println("No hay salas registradas");
@@ -160,6 +188,21 @@ public class Funcion implements Serializable {
         return salaParaFuncion;
     }
 
+    /**
+     * Pide el ingreso de una sala, una pelicula, fecha y hora de funcion y crea
+     * una nueva funcion.
+     *
+     * @param leer Tipo scanner, herramienta de lectura de ingreso
+     * @param listaSalas Tipo arrayList de Sala donde se seleccionara una sala
+     * valida
+     * @param listPelicula Tipo arrayList de Pelicula donde se seleccionara una
+     * pelicula activa
+     * @param listaDeFunciones Tipo arrayList de Funcion donde se validara si ID
+     * existe
+     *
+     * @return Devuelve un objeto de tipo Funcion con los parametros cargados y
+     * validados.
+     */
     public static Funcion nuevaFuncion(Scanner leer, List<Sala> listaSalas, List<Pelicula> listPelicula, List<Funcion> listaDeFunciones) {
         int idFuncion = Validaciones.validarIdFuncion(leer, listaDeFunciones);
         LocalDate fechaFuncion = ingresarFecha(leer);
@@ -183,6 +226,11 @@ public class Funcion implements Serializable {
         }
     }
 
+    /**
+     * Muestra todos los parametros de una funcion de manera organizada.
+     *
+     * @param funcion objeto tipo Funcion a mostrar.
+     */
     public static void motrarUnaFuncion(Funcion funcion) {
         if (funcion != null && funcion.getPelicula() != null && funcion.getPelicula().getEstaActiva()) {
             System.out.println("ID Funcion: " + funcion.getIdFuncion());
@@ -194,6 +242,16 @@ public class Funcion implements Serializable {
         }
     }
 
+    /**
+     * Busca una funcion por id de la funcion en una lista de funciones. De
+     * encontrarlo devuelve la id. De no encontrarlo, o si la lista es null o
+     * vacia, devuelve -1
+     *
+     * @param listaDeFunciones lista de funcion donde se buscara por ID.
+     * @param idFuncion Tipo int, id de funcion a buscar
+     * @return devuelve un entero De encontrar la id, devuelve la misma. De no
+     * encontrarlo devuelve -1
+     */
     public static int buscarFuncionPorId(List<Funcion> listaDeFunciones, int idFuncion) {
         if (listaDeFunciones == null || listaDeFunciones.isEmpty()) {
             return -1;
@@ -206,6 +264,17 @@ public class Funcion implements Serializable {
         return -1;
     }
 
+    /**
+     * Busca una funcion por ID. De encontrarlo devuelve la funcion, sino
+     * devuelve null
+     *
+     * @param listaDeFunciones Lista de tipo Funcion. Lista de funciones donde
+     * se buscara por ID
+     * @param idDeFuncion tipo int, numero entero que se buscara en la lista de
+     * funciones
+     * @return Devuelve un objeto de tipo Funcion si se encuentra la ID, null si
+     * no lo encuentra o si hay un error
+     */
     public static Funcion traerFuncionPorId(List<Funcion> listaDeFunciones, int idDeFuncion) {
         if (listaDeFunciones == null || listaDeFunciones.isEmpty()) {
             return null;
@@ -218,11 +287,4 @@ public class Funcion implements Serializable {
         return null;
     }
 
-    public String getHorarioFuncion() {
-        return (horario != null) ? horario.toString() : "";
-    }
-
-    public String getFechaFuncion() {
-        return (fecha != null) ? fecha.toString() : "";
-    }
 }

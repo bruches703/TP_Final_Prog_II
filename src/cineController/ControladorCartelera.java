@@ -161,15 +161,15 @@ public class ControladorCartelera {
             if (f == null) {
                 continue;
             }
-            Pelicula p = f.getPelicula();
-            if (p == null || !p.getEstaActiva()) {
+            Pelicula pelicula = f.getPelicula();
+            if (pelicula == null || !pelicula.getEstaActiva()) {
                 continue;
             }
 
             boolean coincidePelicula = tituloPelicula == null
                     || tituloPelicula.isBlank()
                     || "Todas las películas".equals(tituloPelicula)
-                    || (p.getTitulo() != null && tituloPelicula.equalsIgnoreCase(p.getTitulo().trim()));
+                    || (pelicula.getTitulo() != null && tituloPelicula.equalsIgnoreCase(pelicula.getTitulo().trim()));
 
             boolean coincideFecha = fecha == null || fecha.equals(f.getFecha());
 

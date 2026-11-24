@@ -8,7 +8,7 @@ package cineModelos;
  *
  * @author Bruches
  */
-public class Cliente {
+public class Usuario {
     private int dni;
     private String nombre;
     private boolean esAdmin;
@@ -41,7 +41,7 @@ public class Cliente {
     
     // Getters and Setters ---------- Fin
 
-    public Cliente(int dni, String nombre) {
+    public Usuario(int dni, String nombre) {
         this.dni = dni;
         this.nombre = nombre;
         this.esAdmin = false;

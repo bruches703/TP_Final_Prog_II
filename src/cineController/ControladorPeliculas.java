@@ -8,7 +8,6 @@ import cineModelos.Pelicula;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,7 +31,7 @@ public class ControladorPeliculas {
     private TableColumn<Pelicula, String> colTitulo;
 
     @FXML
-    private TableColumn<Pelicula, Long> colDuracion;
+    private TableColumn<Pelicula, String> colDuracion;
 
     @FXML
     private TableColumn<Pelicula, String> colActiva;
@@ -66,109 +65,114 @@ public class ControladorPeliculas {
         this.controladorPrincipal = controladorPrincipal;
     }
 
-    public void setPeliculas(List<Pelicula> peliculas) {
-        if (peliculas != null) {
-            this.listaPeliculasReferencia = peliculas;
-        }
+    public void setDatosPeliculas(List<Pelicula> peliculas) {
+        this.listaPeliculasReferencia = (peliculas != null) ? peliculas : new ArrayList<>();
         peliculasObservables.setAll(this.listaPeliculasReferencia);
+        if (tblPeliculas != null) {
+            tblPeliculas.setItems(peliculasObservables);
+        }
     }
 
     @FXML
     public void initialize() {
-        tblPeliculas.setItems(peliculasObservables);
+        if (tblPeliculas != null) {
+            tblPeliculas.setItems(peliculasObservables);
+            configurarColumnas();
+            tblPeliculas.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+                if (newSel != null) {
+                    if (txtTitulo != null) {
+                        txtTitulo.setText(newSel.getTitulo() != null ? newSel.getTitulo() : "");
+                    }
+                    if (txtDuracion != null) {
+                        long min = (newSel.getDuracion() != null) ? newSel.getDuracion().toMinutes() : 0L;
+                        txtDuracion.setText(min > 0 ? String.valueOf(min) : "");
+                    }
+                    if (chkActiva != null) {
+                        chkActiva.setSelected(newSel.getEstaActiva());
+                    }
+                }
+            });
+        }
         if (chkActiva != null) {
             chkActiva.setSelected(true);
         }
-        configurarColumnas();
-
-        tblPeliculas.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-            if (newSel != null) {
-                txtTitulo.setText(newSel.getTitulo() != null ? newSel.getTitulo() : "");
-                long min = newSel.getDuracion() != null ? newSel.getDuracion().toMinutes() : 0L;
-                txtDuracion.setText(String.valueOf(min));
-                if (chkActiva != null) {
-                    chkActiva.setSelected(newSel.getEstaActiva());
-                }
-            }
-        });
     }
 
     private void configurarColumnas() {
-        colTitulo.setCellValueFactory(cell -> {
-            Pelicula p = cell.getValue();
-            return new SimpleStringProperty(p != null && p.getTitulo() != null ? p.getTitulo() : "");
-        });
-
-        colDuracion.setCellValueFactory(cell -> {
-            Pelicula p = cell.getValue();
-            long minutos = (p != null && p.getDuracion() != null) ? p.getDuracion().toMinutes() : 0L;
-            return new SimpleObjectProperty<>(minutos);
-        });
-
-        colActiva.setCellValueFactory(cell -> {
-            Pelicula p = cell.getValue();
-            boolean activa = p != null && p.getEstaActiva();
-            return new SimpleStringProperty(activa ? "Sí" : "No");
-        });
+        if (colTitulo != null) {
+            colTitulo.setCellValueFactory(cell -> {
+                Pelicula p = cell.getValue();
+                return new SimpleStringProperty(p != null && p.getTitulo() != null ? p.getTitulo() : "");
+            });
+        }
+        if (colDuracion != null) {
+            colDuracion.setCellValueFactory(cell -> {
+                Pelicula p = cell.getValue();
+                if (p == null || p.getDuracion() == null) {
+                    return new SimpleStringProperty("");
+                }
+                return new SimpleStringProperty(String.valueOf(p.getDuracion().toMinutes()));
+            });
+        }
+        if (colActiva != null) {
+            colActiva.setCellValueFactory(cell -> {
+                Pelicula p = cell.getValue();
+                boolean activa = p != null && p.getEstaActiva();
+                return new SimpleStringProperty(activa ? "Sí" : "No");
+            });
+        }
     }
 
     @FXML
     private void agregarPelicula() {
-        String titulo = (txtTitulo != null && txtTitulo.getText() != null)
-                ? txtTitulo.getText().trim()
-                : "";
-        String duracionTexto = (txtDuracion != null && txtDuracion.getText() != null)
-                ? txtDuracion.getText().trim()
-                : "";
-        boolean activa = (chkActiva == null) || chkActiva.isSelected();
-
-        if (titulo.isEmpty()) {
-            lblMensaje.setText("Ingresá un título para la película.");
+        DatosPelicula datos = validarYLeerFormulario();
+        if (datos == null) {
             return;
         }
 
-        long minutos;
-        try {
-            minutos = Long.parseLong(duracionTexto);
-        } catch (NumberFormatException e) {
-            lblMensaje.setText("La duración debe ser un número entero en minutos.");
-            return;
-        }
-
-        if (minutos <= 0) {
-            lblMensaje.setText("La duración debe ser mayor a 0 minutos.");
-            return;
-        }
-
-        for (Pelicula p : listaPeliculasReferencia) {
-            if (p != null && p.getTitulo() != null
-                    && p.getTitulo().trim().equalsIgnoreCase(titulo)) {
-                lblMensaje.setText("Ya existe una película con el título \"" + titulo + "\".");
-                return;
-            }
-        }
-
-        Pelicula nuevaPelicula = new Pelicula(titulo, Duration.ofMinutes(minutos), activa);
-
-        listaPeliculasReferencia.add(nuevaPelicula);
+        Pelicula nueva = new Pelicula(datos.titulo, Duration.ofMinutes(datos.minutos), datos.activa);
+        listaPeliculasReferencia.add(nueva);
         peliculasObservables.setAll(listaPeliculasReferencia);
 
-        if (controladorPrincipal != null && controladorPrincipal.getAlmacenPeliculas() != null) {
-            controladorPrincipal.getAlmacenPeliculas().almacenarPelicula(nuevaPelicula);
+        if (controladorPrincipal != null && !controladorPrincipal.persistirEstadoActual(lblMensaje)) {
+            return;
         }
 
         limpiarFormulario();
-        lblMensaje.setText("Película \"" + titulo + "\" agregada y guardada en peliculas.csv.");
+        mostrarMensaje("Película agregada y guardada en el estado del cine.");
     }
 
     @FXML
     private void modificarPelicula() {
+        if (tblPeliculas == null) {
+            return;
+        }
         Pelicula seleccionada = tblPeliculas.getSelectionModel().getSelectedItem();
         if (seleccionada == null) {
-            lblMensaje.setText("Seleccioná una película de la tabla para modificar.");
+            mostrarMensaje("Seleccioná una película de la tabla para modificar.");
             return;
         }
 
+        DatosPelicula datos = validarYLeerFormulario();
+        if (datos == null) {
+            return;
+        }
+
+        seleccionada.setTitulo(datos.titulo);
+        seleccionada.setDuracion(Duration.ofMinutes(datos.minutos));
+        seleccionada.setEstaActiva(datos.activa);
+
+        peliculasObservables.setAll(listaPeliculasReferencia);
+        tblPeliculas.refresh();
+
+        if (controladorPrincipal != null && !controladorPrincipal.persistirEstadoActual(lblMensaje)) {
+            return;
+        }
+
+        mostrarMensaje("Película modificada y guardada en el estado del cine.");
+    }
+
+    private DatosPelicula validarYLeerFormulario() {
         String titulo = (txtTitulo != null && txtTitulo.getText() != null)
                 ? txtTitulo.getText().trim()
                 : "";
@@ -178,52 +182,41 @@ public class ControladorPeliculas {
         boolean activa = (chkActiva == null) || chkActiva.isSelected();
 
         if (titulo.isEmpty()) {
-            lblMensaje.setText("Ingresá un título para la película.");
-            return;
+            mostrarMensaje("Ingresá el título de la película.");
+            return null;
         }
 
-        long minutos;
+        int minutos;
         try {
-            minutos = Long.parseLong(duracionTexto);
-        } catch (NumberFormatException e) {
-            lblMensaje.setText("La duración debe ser un número entero en minutos.");
-            return;
+            minutos = Integer.parseInt(duracionTexto);
+        } catch (NumberFormatException ex) {
+            mostrarMensaje("Ingresá una duración válida en minutos (número entero).");
+            return null;
         }
 
         if (minutos <= 0) {
-            lblMensaje.setText("La duración debe ser mayor a 0 minutos.");
-            return;
+            mostrarMensaje("La duración debe ser mayor a 0 minutos.");
+            return null;
         }
 
-        for (Pelicula p : listaPeliculasReferencia) {
-            if (p != null && p != seleccionada && p.getTitulo() != null
-                    && p.getTitulo().trim().equalsIgnoreCase(titulo)) {
-                lblMensaje.setText("Ya existe otra película con el título \"" + titulo + "\".");
-                return;
-            }
-        }
-
-        int idx = listaPeliculasReferencia.indexOf(seleccionada);
-        Pelicula actualizada = new Pelicula(titulo, Duration.ofMinutes(minutos), activa);
-        if (idx >= 0) {
-            listaPeliculasReferencia.set(idx, actualizada);
-        }
-
-        peliculasObservables.setAll(listaPeliculasReferencia);
-        tblPeliculas.getSelectionModel().select(actualizada);
-
-        if (controladorPrincipal != null && controladorPrincipal.getAlmacenPeliculas() != null) {
-            controladorPrincipal.getAlmacenPeliculas().sobrescribirPeliculas(listaPeliculasReferencia);
-        }
-
-        lblMensaje.setText("Película \"" + titulo + "\" modificada y guardada en peliculas.csv.");
+        return new DatosPelicula(titulo, minutos, activa);
     }
 
     private void limpiarFormulario() {
-        txtTitulo.clear();
-        txtDuracion.clear();
+        if (txtTitulo != null) {
+            txtTitulo.clear();
+        }
+        if (txtDuracion != null) {
+            txtDuracion.clear();
+        }
         if (chkActiva != null) {
             chkActiva.setSelected(true);
+        }
+    }
+
+    private void mostrarMensaje(String texto) {
+        if (lblMensaje != null) {
+            lblMensaje.setText(texto);
         }
     }
 
@@ -232,5 +225,8 @@ public class ControladorPeliculas {
         if (controladorPrincipal != null) {
             controladorPrincipal.navegarA("inicio");
         }
+    }
+
+    private record DatosPelicula(String titulo, int minutos, boolean activa) {
     }
 }

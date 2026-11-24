@@ -5,24 +5,16 @@
 package cineAplication;
 
 import cineController.ControladorPrincipal;
-import cineModelos.Funcion;
-import cineModelos.Pelicula;
-import cineModelos.Reserva;
-import cineModelos.Sala;
 import cineModelos.SucursalCine;
-import cinePersistencia.AlmacenamientoFunciones;
-import cinePersistencia.AlmacenamientoReserva;
-import cinePersistencia.AlmacenamientoSalas;
-import cinePersistencia.AlmacenarPeliculas;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import cinePersistencia.AlmacenamientoEstadoCine;
+import cinePersistencia.PersistenciaException;
+import java.io.IOException;
+import java.net.URL;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 /**
@@ -31,54 +23,61 @@ import javafx.stage.Stage;
  */
 public class app extends Application {
 
-    private static final Path CARPETA_DATASAVE = Paths.get("datasave");
-
     @Override
-    public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/cineVistas/principal.fxml"));
+    public void start(Stage primaryStage) throws Exception {
+        URL fxmlUrl = getClass().getResource("/cineVistas/principal.fxml");
+        if (fxmlUrl == null) {
+            throw new IOException("No se encontró el recurso FXML: /cineVistas/principal.fxml");
+        }
+
+        FXMLLoader loader = new FXMLLoader(fxmlUrl);
         Parent root = loader.load();
 
         ControladorPrincipal controladorPrincipal = loader.getController();
-        inicializarAplicacion(controladorPrincipal);
+        AlmacenamientoEstadoCine almacenEstado = new AlmacenamientoEstadoCine();
 
-        Scene scene = new Scene(root);
-        var css = getClass().getResource("/cineVistas/estilos.css");
-        if (css != null) {
-            scene.getStylesheets().add(css.toExternalForm());
+        SucursalCine sucursal;
+        String mensajeEstado;
+        try {
+            sucursal = almacenEstado.cargarSucursal();
+            mensajeEstado = "Estado serializado cargado desde " + almacenEstado.getRutaArchivoEstado();
+        } catch (PersistenciaException ex) {
+            sucursal = almacenEstado.crearSucursalInicial();
+            mensajeEstado = "Error de persistencia al cargar estado";
+            mostrarAlertaError(primaryStage, "Error de persistencia", ex.getMessage());
         }
 
-        stage.setTitle("Cine UTN");
-        stage.setScene(scene);
-        stage.show();
-    }
+        controladorPrincipal.setAlmacenEstado(almacenEstado);
+        controladorPrincipal.setDatosIniciales(
+                sucursal,
+                sucursal.getPeliculas(),
+                sucursal.getSalas(),
+                sucursal.getFunciones(),
+                sucursal.getReservas(),
+                mensajeEstado
+        );
 
-    private void inicializarAplicacion(ControladorPrincipal controladorPrincipal) throws Exception {
-        Files.createDirectories(CARPETA_DATASAVE);
+        Scene scene = new Scene(root, 1180, 760);
 
-        List<Pelicula> peliculas = new ArrayList<>();
-        List<Sala> salas = new ArrayList<>();
-        List<Funcion> funciones = new ArrayList<>();
-        List<Reserva> reservas = new ArrayList<>();
-
-        String estado = cargarRepositoriosCsv(peliculas, salas, funciones, reservas);
-        SucursalCine cine = new SucursalCine("Cine UTN", peliculas, salas, funciones, reservas);
-
-        if (controladorPrincipal != null) {
-            controladorPrincipal.setDatosIniciales(cine, peliculas, salas, funciones, reservas, estado);
+        URL cssUrl = getClass().getResource("/cineVistas/estilos.css");
+        if (cssUrl != null) {
+            scene.getStylesheets().add(cssUrl.toExternalForm());
         }
+
+        primaryStage.setTitle("Sistema de Reservas de Cine");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
-    private String cargarRepositoriosCsv(
-            List<Pelicula> peliculas,
-            List<Sala> salas,
-            List<Funcion> funciones,
-            List<Reserva> reservas
-    ) {
-        peliculas.addAll(new AlmacenarPeliculas(CARPETA_DATASAVE).cargarPeliculas());
-        salas.addAll(new AlmacenamientoSalas(CARPETA_DATASAVE).cargarSalas());
-        funciones.addAll(new AlmacenamientoFunciones(CARPETA_DATASAVE).cargarFunciones(salas, peliculas));
-        reservas.addAll(new AlmacenamientoReserva(CARPETA_DATASAVE).cargarReservas());
-        return "Datos cargados desde " + CARPETA_DATASAVE.toAbsolutePath();
+    private void mostrarAlertaError(Stage owner, String titulo, String detalle) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        if (owner != null) {
+            alert.initOwner(owner);
+        }
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(detalle);
+        alert.showAndWait();
     }
 
     public static void main(String[] args) {
